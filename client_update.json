@@ -1,0 +1,7 @@
+{
+  "version_code": 14,
+  "version_name": "2.3.1",
+  "update_url": "http://94.156.115.120/apps/OldMarket2_3_1.apk",
+  "notes_ru": "Изменен API отзывов, отправка отзывов в старых версиях клиента теперь не работает.",
+  "notes_en": "The review API has been changed; sending reviews in older client versions no longer works."
+}

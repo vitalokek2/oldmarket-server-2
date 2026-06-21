@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OldMarket</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+</head>
+  <div class="sticky-header-section">
+    <header class="topnav">
+      <div class="logo">
+        <img src="oldlogo.png" alt="Android Market Logo" width="260">
+        <p id="visitorCount" style="color: rgb(224, 224, 224); font-size: 0.8em;"></p>
+      </div>
+    </header>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Поиск" onkeyup="searchApps()">
+    </div>
+  </div>
+    <script>
+      function searchApps() {
+          var query = document.getElementById('searchInput').value.toLowerCase();
+          var apps = document.getElementsByClassName('app');
+          
+          for (var i = 0; i < apps.length; i++) {
+              var appName = apps[i].getElementsByClassName('app-title')[0].textContent.toLowerCase();
+              if (appName.indexOf(query) !== -1) {
+                  apps[i].style.display = 'flex';
+              } else {
+                  apps[i].style.display = 'none';
+              }
+          }
+      }
+
+      function installApp(appUrl) {
+          window.location.href = appUrl;
+      }
+    </script>
+
+  <main>
+    <section class="featured">
+      <div class="app-list">
+        <div class="add">
+            <img src="downloadmarket.jpg" alt="Скачать Маркет" width="179" class="button-image" onclick="installApp('/marketdownload.html')">
+          </div>
+          <div class="add">
+            <img src="apps.jpg" alt="Приложения" width="180" class="button-image" onclick="installApp('/index.html')">
+          </div>
+        <div class="app" onclick="installApp('appdownload/angrybirds/index.html')">
+            <img src="apps/angrybirds.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Angry Birds</span><br><span>Android 1.6+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/cuttherope/index.html')">
+            <img src="apps/CutTheRope.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Cut The Rope</span><br><span>Android 1.6+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/minecraftpe/index.html')">
+            <img src="apps/Minecraft.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Minecraft Pocket Edition</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/exploration/index.html')">
+            <img src="apps/exploration.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Exploration</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/rovercraft/index.html')">
+            <img src="apps/rovercraft.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Rover Craft</span><br><span>Android 4.0+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/doodlejump/index.html')">
+            <img src="apps/doodlejump.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Doodle Jump</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/doodlearmy/index.html')">
+            <img src="apps/doodlearmy.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Doodle Army</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/fruitninja/index.html')">
+            <img src="apps/fruitninja.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Fruit Ninja</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/subwayserf/index.html')">
+            <img src="apps/subwayserf.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Subway Serf</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/hungryshark/index.html')">
+            <img src="apps/hungryshark.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Hungry Shark</span><br><span>Android 1.5+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/retrobrawl/index.html')">
+            <img src="apps/retrobrawl.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Retro Brawl</span><br><span>Android 4.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/talkingtom/index.html')">
+            <img src="apps/talkingtom.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Говорящий Том</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/talkingben/index.html')">
+            <img src="apps/talkingben.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Говорящий Бен</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/djinjer2/index.html')">
+            <img src="apps/djinjer2.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Джинджер 2</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/talkinghippo/index.html')">
+            <img src="apps/hippo.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Говорящий Хиппо</span><br><span>Android 1.5+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/talkingangela/index.html')">
+            <img src="apps/talkingangela.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Говорящая Анджела</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/talkingbird/index.html')">
+            <img src="apps/talkingbird.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Говорящий Ларри</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/talkingsanta/index.html')">
+            <img src="apps/talkingsanta.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Говорящий Санта</span><br><span>Android 4.0+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/plantsvszombies/index.html')">
+            <img src="apps/plantsvszombies.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Plants Vs Zombies</span><br><span>Android 1.5+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/pekora2017/index.html')">
+            <img src="apps/pecora2017.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Roblox (2017)</span><br><span>Android 4.0+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/turboracing3d/index.html')">
+            <img src="apps/turboracing3d.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Turbo Racing 3D</span><br><span>Android 2.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/earntodielite/index.html')">
+            <img src="apps/earntodielite.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Earn To Die Lite</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Club-Penguin-Sled-Racer.apk')">
+            <img src="apps/gonkinasankah.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Гонки на санках</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/doom-touch.apk')">
+            <img src="apps/doom-touch.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Doom Touch</span><br><span>Android 3.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/resident-evil-4.apk')">
+            <img src="apps/ResidentEvil4.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Resident Evil 4</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Svompi2.apk')">
+            <img src="apps/svompi2.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Свомпи 2</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/FlappyBird.apk')">
+            <img src="apps/flappybird.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Flappy Bird</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/redball4.apk')">
+            <img src="apps/redball.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Red Ball 4</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/clashofclans/index.html')">
+            <img src="apps/clashofclans.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Clash Of Clans</span><br><span>Android 4.0+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/pcsimulator/index.html')">
+            <img src="apps/pcsimulator.png" width="55">
+            <div class="app-info">
+                <span class="app-title">PC Simulator</span><br><span>Android 4.4+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/smashhit/index.html')">
+            <img src="apps/smashhit.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Smash Hit</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/hill_climb_racing.apk')">
+            <img src="apps/HillClimbRacing.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Hill Climb Racing</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Bad_Piggies.apk')">
+            <img src="apps/BadPiggies.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Bad Piggies</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/FNAF1.apk')">
+            <img src="apps/fnaf1.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Five Nights at Freddy</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/five-nights-at-freddy-3.apk')">
+            <img src="apps/fivenightsatfreddy3.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Five Nights At Freddy 3</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/pou.apk')">
+            <img src="apps/pou.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Pou</span><br><span>Android 1.6+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/temple-run.apk')">
+            <img src="apps/templerun.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Temple Run</span><br><span>Android 2.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/PixelDungeon.apk')">
+            <img src="apps/pixeldungeon.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Pixel Dungeon</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/PoleChudesPlus.apk')">
+            <img src="apps/polechudes.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Поле Чудес Плюс</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/pole/index.html')">
+            <img src="apps/pole.PNG" width="55">
+            <div class="app-info">
+                <span class="app-title">Поле</span><br><span>Android 1.6+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/seabattle/index.html')">
+            <img src="apps/seabattle.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Морской Бой</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/DrDriving.apk')">
+            <img src="apps/drdriving.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Dr. Driving</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Dragon_Hunter.apk')">
+            <img src="apps/dragonhunter.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Dragon Hunter</span><br><span>Android 2.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/geometrydash/index.html')">
+            <img src="apps/geometrydash.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Geometry Dash</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Assasins_Creed_Revelations.apk')">
+            <img src="apps/assassinscreed.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Assasins Creed Revelations</span><br><span>Android 1.5+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Catchers.apk')">
+            <img src="apps/Catchers.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Catchers</span><br><span>Android 4.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Annoying-Orange.apk')">
+            <img src="apps/splatterup.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Splatter Up!</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/AnnoyingOrangeCarnage.apk')">
+            <img src="apps/aofree.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Annoying Orange Free</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/cloudssheep/index.html')">
+            <img src="apps/clouds-sherp.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Clouds & Sheep</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/TheNightFlier.apk')">
+            <img src="apps/thenightflier.png" width="55">
+            <div class="app-info">
+                <span class="app-title">The Night Flier</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/TheNightFlier2.apk')">
+            <img src="apps/thenightflier2.png" width="55">
+            <div class="app-info">
+                <span class="app-title">The Night Flier 2</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Veshalka.apk')">
+            <img src="apps/veshalka.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Вешалка</span><br><span>Android 1.5+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/bmx_boy.apk')">
+            <img src="apps/bmxboy.png" width="55">
+            <div class="app-info">
+                <span class="app-title">BMX Boy</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/skater_boy.apk')">
+            <img src="apps/skaterboy.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Skater Boy</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Jetpack-Joyride.apk')">
+            <img src="apps/jetpack_joyride.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Jetpack Joyride</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Good_Pizza.apk')">
+            <img src="apps/goodpizza.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Good Pizza</span><br><span>Android 3.0+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Getaway.apk')">
+            <img src="apps/getaway.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Getaway</span><br><span>Android 1.5+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/GolovolomkiSoSpichkami.apk')">
+            <img src="apps/golovolomkisospichkami.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Головоломки со Спичками</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Ski-Safari.apk')">
+            <img src="apps/skisafari2.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Ski Safari 2</span><br><span>Android 4.0.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/Shadow-Skate.apk')">
+            <img src="apps/shadowskate.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Shadow Skate</span><br><span>Android 2.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/PPSSPP.apk')">
+            <img src="apps/ppsspp.png" width="55">
+            <div class="app-info">
+                <span class="app-title">PPSSPP</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/CSP.apk')">
+            <img src="apps/csp.png" width="55">
+            <div class="app-info">
+                <span class="app-title">CS Portable</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/2d-strike.apk')">
+            <img src="apps/2dstrike.png" width="55">
+            <div class="app-info">
+                <span class="app-title">2D Strike</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/KittenCatSimulator.apk')">
+            <img src="apps/kittencatsimulator.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Симулятор Кота</span><br><span>Android 4.0.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/KidsDoodle.apk')">
+            <img src="apps/kidsdoodle.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Kids Doodle</span><br><span>Android 2.2+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/nyan-cat-lost-in-space.apk')">
+            <img src="apps/nyancat.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Nyan Cat: Lost In Space</span><br><span>Android 2.3+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('apps/crazy_penguin.apk')">
+            <img src="apps/crazypenguin.png" width="55">
+            <div class="app-info">
+                <span class="app-title">Crazy Penguin</span><br><span>Android 1.0+</span>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>Old Market &copy; 2025</p>
+    </div>
+    </section>
+</main>
+</body>
+</html>

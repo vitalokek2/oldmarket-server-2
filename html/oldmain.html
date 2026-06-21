@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>OldMarket</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<header class="topnav">
+  <div class="logo">
+    <img src="oldlogo.png" alt="Android Market" width="260">
+  </div>
+</header>
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="Поиск" onkeyup="searchApps()">
+</div>
+<body>
+  <div class="banner">
+    <img src="banner1.gif">
+  </div>
+    <script>
+      function searchApps() {
+          var query = document.getElementById('searchInput').value.toLowerCase();
+          var apps = document.getElementsByClassName('app');
+          
+          for (var i = 0; i < apps.length; i++) {
+              var appName = apps[i].getElementsByClassName('app-title')[0].textContent.toLowerCase();
+              if (appName.indexOf(query) !== -1) {
+                  apps[i].style.display = 'flex';
+              } else {
+                  apps[i].style.display = 'none';
+              }
+          }
+      }
+
+      function installApp(appUrl) {
+          window.location.href = appUrl;
+      }
+    </script>
+
+  <main>
+    <section class="featured">
+      <div class="app-list">
+        <div class="add">
+          <img src="games.png" alt="Игры" width="190" class="button-image" onclick="installApp('/games.html')">
+        </div>
+        <div class="app" onclick="installApp('/appdownload/rootexplorer/index.html')">
+          <img src="apps/rootexplorer.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Root Explorer</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/totalcommander/index.html')">
+          <img src="apps/totalcommander.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Total Commander</span><br><span>Android 2.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/youtube/index.html')">
+          <img src="apps/YouTube.png" width="55">
+          <div class="app-info">
+            <span class="app-title">YouTube</span><br><span>Android 2.2 - 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/minivk/index.html')">
+          <img src="apps/minivk.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Mini VK</span><br><span>Android 1.5+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/vkmp3mod/index.html')">
+          <img src="apps/vkmp3mod.png" width="55">
+          <div class="app-info">
+            <span class="app-title">VK Mp3 Mod</span><br><span>Android 4.0.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/openvk/index.html')">
+            <img src="apps/openvk.png" width="55">
+            <div class="app-info">
+              <span class="app-title">Open VK</span><br><span>Android 2.1+</span>
+            </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/katemobile/index.html')">
+          <img src="apps/katemobile.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Kate Mobile</span><br><span>Android 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/facebooklite/index.html')">
+          <img src="apps/facebook-lite.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Facebook Lite</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/kutegram/index.html')">
+          <img src="apps/kutegram.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Kutegram</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/telegramx/index.html')">
+          <img src="apps/telegramx.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Telegram X</span><br><span>Android 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/operaclassic/index.html')">
+          <img src="apps/operaclassic.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Opera Classic</span><br><span>Android 1.6+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/operamini/index.html')">
+          <img src="apps/operamini.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Opera Mini</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/operaminibeta/index.html')">
+          <img src="apps/operaminibeta.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Opera Mini Beta</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/yandexbrowser/index.html')">
+          <img src="apps/yandexbrowser.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Яндекс Браузер</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/apps/Boat_Browser.apk')">
+          <img src="apps/boatbrowser.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Boat Browser</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/boatbrowsermini/index.html')">
+          <img src="apps/boatbrowsermini.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Boat Browser Mini</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/ucbrowser/index.html')">
+          <img src="apps/ucbrowser.png" width="55">
+          <div class="app-info">
+            <span class="app-title">UC Browser</span><br><span>Android 2.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/ucbrowsermini/index.html')">
+          <img src="apps/ucbrowsermini.png" width="55">
+          <div class="app-info">
+            <span class="app-title">UC Browser Mini</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/firefox/index.html')">
+          <img src="apps/firefox.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Mozilla FireFox</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/2gis/index.html')">
+          <img src="apps/2gis.png" width="55">
+          <div class="app-info">
+            <span class="app-title">2ГИС</span><br><span>Android 2.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/russkoeradio/index.html')">
+          <img src="apps/russkoeradio.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Русское Радио</span><br><span>Android 1.5+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/energyradio/index.html')">
+          <img src="apps/energy_launcher.jpg" width="55">
+          <div class="app-info">
+            <span class="app-title">Radio ENERGY Russia</span><br><span>Android 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/tuneinradiopro/index.html')">
+          <img src="apps/tuneinradiopro.png" width="55">
+          <div class="app-info">
+            <span class="app-title">TuneIn Radio Pro</span><br><span>Android 1.6+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/xiialive/index.html')">
+          <img src="apps/xiialive.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Xiia Live</span><br><span>Android 1.5+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/winamp/index.html')">
+          <img src="apps/winamp.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Winamp</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/aimp/index.html')">
+          <img src="apps/aimp.png" width="55">
+          <div class="app-info">
+            <span class="app-title">AIMP</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/playmusic/index.html')">
+          <img src="apps/playmusic.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Google Play Музыка</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/vlc/index.html')">
+          <img src="apps/vlc.png" width="55">
+          <div class="app-info">
+            <span class="app-title">VLC</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/antutu/index.html')">
+          <img src="apps/antutu.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Antutu Benchmark</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/skypelite/index.html')">
+          <img src="apps/skypelite.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Skype Lite</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/yandextranslate/index.html')">
+          <img src="apps/yandextranslate.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Яндекс Переводчик</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/yandexpogoda/index.html')">
+          <img src="apps/yandexpogoda.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Яндекс Погода</span><br><span>Android 2.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/googletranslate/index.html')">
+          <img src="apps/googletranslate.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Google Переводчик</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/forecaweather/index.html')">
+          <img src="apps/forecaweather.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Foreca Weather</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/ilmeteo/index.html')">
+          <img src="apps/ilmeteo.png" width="55">
+          <div class="app-info">
+            <span class="app-title">ilMeteo</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/pogoda14days/index.html')">
+          <img src="apps/pogoda14days.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Погода 14 дней</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/chatruletka/index.html')">
+          <img src="apps/chatruletka.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Чат Рулетка</span><br><span>Android 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/adobereader/index.html')">
+          <img src="apps/reader_app.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Adobe Reader</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/ereader/index.html')">
+          <img src="apps/ereader-prestigio.png" width="55">
+          <div class="app-info">
+            <span class="app-title">eReader Prestigio</span><br><span>Android 1.6+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/myiphide/index.html')">
+          <img src="apps/myiphide.png" width="55">
+          <div class="app-info">
+            <span class="app-title">My Ip Hide</span><br><span>Android 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/remotemouse/index.html')">
+          <img src="apps/remote_mouse.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Remote Mouse</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/esexplorer/index.html')">
+          <img src="apps/esexplorer.png" width="55">
+          <div class="app-info">
+            <span class="app-title">ES Проводник</span><br><span>Android 2.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/PhasesOfTheMoon/index.html')">
+          <img src="apps/phasesofthemoon.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Phases Of The Moon</span><br><span>Android 2.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/Aida64/index.html')">
+          <img src="apps/Aida64.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Aida64</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/cpuid/index.html')">
+          <img src="apps/cpuz.png" width="55">
+          <div class="app-info">
+            <span class="app-title">CPU-Z</span><br><span>Android 2.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/mega/index.html')">
+          <img src="apps/mega.png" width="55">
+          <div class="app-info">
+            <span class="app-title">MEGA</span><br><span>Android 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/googleplayservices/index.html')">
+          <img src="apps/googleplayservices.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Google Play Services</span><br><span>Android 2.3 - 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/googleservicesframework/index.html')">
+          <img src="apps/app.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Google Services Framework</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/googleaccountmanager/index.html')">
+          <img src="apps/app.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Google Account Manager</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/dcikonztheme/index.html')">
+          <img src="apps/dcikonztheme.png" width="55">
+          <div class="app-info">
+            <span class="app-title">DCikonZ Theme</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/cucalc/index.html')">
+          <img src="apps/cucalc.png" width="55">
+          <div class="app-info">
+            <span class="app-title">CuCalc</span><br><span>Android 1.6+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('apps/ipwebcam.apk')">
+          <img src="apps/ipwebcam.png" width="55">
+          <div class="app-info">
+            <span class="app-title">IP Webcam</span><br><span>Android 1.6+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/nexusrevamped/index.html')">
+          <img src="apps/nexusrevamped.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Nexus Revamped</span><br><span>Android 2.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('/appdownload/drawacartoon/index.html')">
+          <img src="apps/drawacartoon.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Рисуем Мультфильмы 2</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/picsart/index.html')">
+          <img src="apps/picsart.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Picsart</span><br><span>Android 2.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/j2meloader/index.html')">
+          <img src="apps/j2meloader.png" width="55">
+          <div class="app-info">
+            <span class="app-title">J2ME Loader</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/waybackmachine/index.html')">
+          <img src="apps/waybackmachine.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Wayback Machine</span><br><span>Android 4.2+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/wplauncher/index.html')">
+          <img src="apps/windows8launcher.png" width="55">
+          <div class="app-info">
+            <span class="app-title">WP Launcher 8</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/novalauncher/index.html')">
+          <img src="apps/novalauncher.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Nova Launcher</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/galaxylauncher/index.html')">
+          <img src="apps/galaxylauncher.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Galaxy Launcher</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/espierlauncher/index.html')">
+          <img src="apps/espierlauncher.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Espier Launcher i6</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/XperiaLauncher/index.html')">
+          <img src="apps/xperiahome.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Xperia Launcher</span><br><span>Android 4.1+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/rommanager/index.html')">
+          <img src="apps/rommanagaer.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Rom Manager</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/bochs/index.html')">
+          <img src="apps/bochs.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Bochs</span><br><span>Android 4.0+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/luckypatcher/index.html')">
+          <img src="apps/luckypatcher.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Lucky Patcher</span><br><span>Android 2.3+</span>
+          </div>
+        </div>
+        <div class="app" onclick="installApp('appdownload/apkeditor/index.html')">
+          <img src="apps/apk-editor-pro.png" width="55">
+          <div class="app-info">
+            <span class="app-title">Apk Editor</span><br><span>Android 3.2+</span>
+          </div>
+        </div>
+        <!-- Добавьте больше приложений здесь -->
+      </div>
+    </section>
+  </main>
+  <div class="footer">
+    <p>Old Market &copy; 2025</p>
+</div>
+</body>
+</html>

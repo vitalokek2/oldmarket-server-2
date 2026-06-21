@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Dash</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .header-bar {
+            background-image: url(/background.jpg);
+            background-repeat: repeat;
+            background-size: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 16px;
+        }
+
+        .back-btn {
+            font-size: 22px;
+            margin-right: 10px;
+        }
+
+        .store-icon {
+            width: 42px;
+            height: 42px;
+        }
+        .back-icon {
+            width: 20px;
+            height: 25px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon {
+            font-size: 26px;
+            cursor: pointer;
+        }
+
+        .main-info {
+            background: #444;
+            display: flex;
+            align-items: center;
+            padding: 18px 10px;
+        }
+
+        .app-logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 18px;
+        }
+
+        .app-text {
+            flex: 1;
+        }
+
+        .main-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sub-title {
+            color: #aaa;
+            font-size: 19px;
+        }
+
+        .install-btn {
+            background: #54c8d5;
+            color: #fff;
+            border: none;
+            font-size: 21px;
+            cursor: pointer;
+            margin-left: 15px;
+            padding: 10px 20px; /* Добавлено для улучшения внешнего вида кнопки */
+            text-decoration: none;
+        }
+
+        .screenshots {
+            display: flex;
+            background: url('/appdownload/screenback.png');
+            background-repeat: repeat;
+            background-size: 6%;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 22px 0;
+            gap: 24px; /* Позволяем элементам переноситься на новую строку */
+            flex-wrap: wrap; /* Позволяет обернуть элементы при необходимости */
+        }
+
+        .screen {
+            width: 200px;
+            height: 355px;
+            object-fit: cover;
+            background: #ddd;
+            border: 8px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .description {
+            color: #000000;
+            text-align: left;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        /* Медиазапросы для адаптивности */
+        @media (max-width: 320px) {
+            .main-title {
+                font-size: 20px;
+            }
+
+            .sub-title {
+                font-size: 16px;
+            }
+
+            .install-btn {
+                padding: 1px 1px;
+                font-size: 18px;
+                text-decoration: none;
+            }
+
+            .screen {
+                width: 150px;
+                height: 267px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 20px;
+            }
+
+            .sub-title {
+                font-size: 14px;
+            }
+
+            .install-btn {
+                padding: 1px 1px;
+                font-size: 16px;
+                text-decoration: none;
+            }
+
+            .screen {
+                width: 130px;
+                height: 232px;
+            }
+
+            .back-btn {
+                font-size: 18px;
+            }
+
+            .store-icon {
+                width: 32px;
+                height: 32px;
+            }
+            .back-icon {
+                width: 20px;
+                height: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-bar">
+            <div class="header-title">
+                <img src="/appdownload/back.png" alt="Store" class="back-icon" onclick="window.location.href='/index.html'">
+                <img src="/appdownload/store.png" alt="Store" class="store-icon">
+            </div>
+        </div>
+        <div class="main-info">
+            <img src="/apps/geometrydash.png" alt="app-logo" class="app-logo">
+            <div class="app-text">
+                <span class="main-title">Geometry Dash</span>
+                <span class="sub-title">RobTop<span>
+            </div>
+            <a href="/apps/GeometryDash1_0.apk" class="install-btn">Установить</a>
+            <span class="sub-title">GDPS 1.0</span>
+        </div>
+    </header>
+    <main>
+        <div class="screenshots">
+            <img src="screenshot1.jpg" alt="Screen 1" class="screen">
+        </div>
+        <div class="description">
+            <p><strong>Описание:</strong></p>
+            <p>Будьте готовы к практически непроходимым испытаниям в мире Geometry Dash. Отточите свои навыки прыжков, полетов и переворотов на опасной дороге с остроконечными препятствиями!
+Простая One Touch игра с большим количеством уровней, которые не оставят Вас равнодушными на протяжении нескольких часов!
+Android 2.3+</p>
+            <p><strong>Другие версии:</strong></p>
+            <div>
+            <a href="/apps/GeometryDash-1.1.apk" class="install-btn">1.1</a>
+            <a href="/apps/GeometryDash-1.2.apk" class="install-btn">1.2</a>
+            <a href="/apps/GeometryDash-1.3.apk" class="install-btn">1.3</a>
+            <a href="/apps/GeometryDash-1.4.apk" class="install-btn">1.4</a>
+            <a href="/apps/GeometryDash-1.5.apk" class="install-btn">1.5</a>
+            <a href="/apps/GeometryDash-1.6.apk" class="install-btn">1.6</a>
+            <a href="/apps/GeometryDash-1.7.apk" class="install-btn">1.7</a>
+            <a href="/apps/GeometryDash-1.8.apk" class="install-btn">1.8</a>
+            <a href="/apps/GeometryDash_1.9.apk" class="install-btn">1.9</a>
+            <a href="/apps/GeometryDash_2.0.apk" class="install-btn">2.0</a>
+            <a href="/apps/1.3-GDPS.apk" class="install-btn">GDPS 1.3</a>
+            <a href="/apps/1.5-GDPS.apk" class="install-btn">GDPS 1.5</a>
+            <a href="/apps/1.9-GDPS.apk" class="install-btn">GDPS 1.9</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

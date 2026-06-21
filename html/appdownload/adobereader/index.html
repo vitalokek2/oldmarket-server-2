@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adobe Reader</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .header-bar {
+            background-image: url(/background.jpg);
+            background-repeat: repeat;
+            background-size: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 16px;
+        }
+
+        .back-btn {
+            font-size: 22px;
+            margin-right: 10px;
+        }
+
+        .store-icon {
+            width: 42px;
+            height: 42px;
+        }
+        .back-icon {
+            width: 20px;
+            height: 25px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon {
+            font-size: 26px;
+            cursor: pointer;
+        }
+
+        .main-info {
+            background: #444;
+            display: flex;
+            align-items: center;
+            padding: 18px 10px;
+        }
+
+        .app-logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 18px;
+        }
+
+        .app-text {
+            flex: 1;
+        }
+
+        .main-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sub-title {
+            color: #aaa;
+            font-size: 19px;
+        }
+
+        .install-btn {
+            background: #54c8d5;
+            color: #fff;
+            border: none;
+            font-size: 21px;
+            cursor: pointer;
+            margin-left: 15px;
+            padding: 10px 20px; /* Добавлено для улучшения внешнего вида кнопки */
+            text-decoration: none;
+        }
+
+        .screenshots {
+            display: flex;
+            background: url('/appdownload/screenback.png');
+            background-repeat: repeat;
+            background-size: 6%;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 22px 0;
+            gap: 24px; /* Позволяем элементам переноситься на новую строку */
+            flex-wrap: wrap; /* Позволяет обернуть элементы при необходимости */
+        }
+
+        .screen {
+            width: 200px;
+            height: 355px;
+            object-fit: cover;
+            background: #ddd;
+            border: 8px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .description {
+            color: #000000;
+            text-align: left;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        /* Медиазапросы для адаптивности */
+        @media (max-width: 320px) {
+            .main-title {
+                font-size: 20px;
+            }
+
+            .sub-title {
+                font-size: 16px;
+            }
+
+            .install-btn {
+                padding: 1px 1px;
+                font-size: 18px;
+                text-decoration: none;
+            }
+
+            .screen {
+                width: 150px;
+                height: 267px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 20px;
+            }
+
+            .sub-title {
+                font-size: 14px;
+            }
+
+            .install-btn {
+                padding: 1px 1px;
+                font-size: 16px;
+                text-decoration: none;
+            }
+
+            .screen {
+                width: 130px;
+                height: 232px;
+            }
+
+            .back-btn {
+                font-size: 18px;
+            }
+
+            .store-icon {
+                width: 32px;
+                height: 32px;
+            }
+            .back-icon {
+                width: 20px;
+                height: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-bar">
+            <div class="header-title">
+                <img src="/appdownload/back.png" alt="Store" class="back-icon" onclick="window.location.href='/index.html'">
+                <img src="/appdownload/store.png" alt="Store" class="store-icon">
+            </div>
+        </div>
+        <div class="main-info">
+            <img src="/apps/reader_app.png" alt="app-logo" class="app-logo">
+            <div class="app-text">
+                <span class="main-title">Adobe Acrobat Reader</span>
+                <span class="sub-title">Adobe Systems, Incorporated<span>
+            </div>
+            <a href="/apps/adobe_reader.apk" class="install-btn">Установить</a>
+        </div>
+    </header>
+    <main>
+        <div class="screenshots">
+            <img src="screenshot1.jpg" alt="Screen 1" class="screen">
+            <img src="screenshot2.jpg" alt="Screen 2" class="screen">
+            <img src="screenshot3.jpg" alt="Screen 3" class="screen">
+        </div>
+        <div class="description">
+            <p><strong>Описание:</strong></p>
+            <p>Adobe Acrobat Reader — это бесплатное приложение международного стандарта для просмотра, подписания и комментирования документов PDF. Android 2.3+</p>
+        </div>
+    </main>
+</body>
+</html>
