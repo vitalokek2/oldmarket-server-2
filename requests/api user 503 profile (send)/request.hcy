@@ -1,9 +1,0 @@
-PUT /api/user/503/profile HTTP/1.1
-Content-Type: application/json; charset=UTF-8
-Content-Length: 59
-User-Agent: Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-J120F Build/LMY47X)
-Host: 94.156.115.120:5000
-Connection: Keep-Alive
-Accept-Encoding: gzip
-
-{"avatar":"avatar3.png","description":"Я Виталий."}

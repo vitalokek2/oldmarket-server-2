@@ -1,6 +1,0 @@
-GET /api/app/14/screenshots HTTP/1.1
-User-Agent: Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-J120F Build/LMY47X)
-Host: 94.156.115.120:5000
-Connection: Keep-Alive
-Accept-Encoding: gzip
-

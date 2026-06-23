@@ -1,0 +1,5 @@
+# Минимально необходимое для запуска самого сервера
+fastapi
+uvicorn[standard]
+aiosqlite
+bcrypt
