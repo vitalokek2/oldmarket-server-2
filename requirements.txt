@@ -1,5 +1,5 @@
-# Минимально необходимое для запуска самого сервера
 fastapi
-uvicorn[standard]
+uvicorn
 aiosqlite
 bcrypt
+python-multipart

@@ -8,7 +8,6 @@ from database import fetch_all, fetch_one, execute_query
 
 router = APIRouter(prefix="/api")
 
-
 @router.get("/app/{app_id}/reviews")
 async def get_reviews(app_id: int):
     rows = await fetch_all(
@@ -35,6 +34,17 @@ async def post_review(app_id: int, request: Request):
         if not user:
             return JSONResponse(status_code=404, content={"success": False, "message": "Пользователь не найден"})
 
+        # ПРОВЕРКА НА ДУБЛИ — пользователь уже оставлял отзыв на это приложение?
+        existing = await fetch_one(
+            "SELECT id FROM reviews WHERE app_id = ? AND user_id = ?",
+            (app_id, user_id)
+        )
+        if existing:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "message": "Вы уже оставляли отзыв на это приложение"}
+            )
+
         review_object = {
             "user_id": user_id,
             "username": user["username"],
@@ -48,7 +58,7 @@ async def post_review(app_id: int, request: Request):
             (app_id, user_id, rating, comment, json.dumps(review_object, ensure_ascii=False)),
         )
 
-        # Пересчитываем средний рейтинг приложения, как делал оригинал
+        # Пересчитываем средний рейтинг
         avg_row = await fetch_one(
             "SELECT AVG(rating) as avg_rating FROM reviews WHERE app_id = ?", (app_id,)
         )
@@ -56,6 +66,14 @@ async def post_review(app_id: int, request: Request):
             await execute_query(
                 "UPDATE apps SET data = json_set(data, '$.rating', ?) WHERE id = ?",
                 (round(avg_row["avg_rating"], 1), app_id),
+            )
+            # Обновляем review_count
+            count_row = await fetch_one(
+                "SELECT COUNT(*) as cnt FROM reviews WHERE app_id = ?", (app_id,)
+            )
+            await execute_query(
+                "UPDATE apps SET data = json_set(data, '$.review_count', ?) WHERE id = ?",
+                (count_row["cnt"], app_id),
             )
 
         return {"success": True, "message": "Отзыв опубликован!"}

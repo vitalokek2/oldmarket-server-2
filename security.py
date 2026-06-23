@@ -2,51 +2,57 @@
 Лёгкие защитные механизмы, перенесённые из оригинального oldmarket-server
 (там это было на SQLAlchemy + отдельные таблицы-модели), адаптированные
 под aiosqlite без лишних зависимостей.
-
-Подключение: вызови `await ensure_security_tables()` один раз при старте
-приложения (см. main.py), дальше используй функции там, где нужно.
 """
-import time
 from datetime import datetime, date, timedelta
 
 from database import fetch_one, execute_query
 
-
 async def ensure_security_tables():
-    """Создаёт таблицы для рейт-лимитов и банов, если их ещё нет."""
+    """Создаёт таблицы для рейт-лимитов, банов и заявок, если их ещё нет."""
     await execute_query("""
-        CREATE TABLE IF NOT EXISTS registration_ip (
-            ip TEXT NOT NULL,
-            day TEXT NOT NULL,
-            count INTEGER DEFAULT 0,
-            PRIMARY KEY (ip, day)
-        )
+    CREATE TABLE IF NOT EXISTS registration_ip (
+        ip TEXT NOT NULL,
+        day TEXT NOT NULL,
+        count INTEGER DEFAULT 0,
+        PRIMARY KEY (ip, day)
+    )
     """)
     await execute_query("""
-        CREATE TABLE IF NOT EXISTS login_attempt (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ip TEXT NOT NULL,
-            username TEXT,
-            success INTEGER NOT NULL,
-            created_at TEXT NOT NULL
-        )
+    CREATE TABLE IF NOT EXISTS login_attempt (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ip TEXT NOT NULL,
+        username TEXT,
+        success INTEGER NOT NULL,
+        created_at TEXT NOT NULL
+    )
     """)
     await execute_query("""
-        CREATE TABLE IF NOT EXISTS blocked_ip (
-            ip TEXT PRIMARY KEY,
-            reason TEXT NOT NULL,
-            until TEXT NOT NULL
-        )
+    CREATE TABLE IF NOT EXISTS blocked_ip (
+        ip TEXT PRIMARY KEY,
+        reason TEXT NOT NULL,
+        until TEXT NOT NULL
+    )
     """)
     await execute_query("""
-        CREATE TABLE IF NOT EXISTS download_ip (
-            app_id INTEGER NOT NULL,
-            ip TEXT NOT NULL,
-            created_at TEXT NOT NULL,
-            PRIMARY KEY (app_id, ip)
-        )
+    CREATE TABLE IF NOT EXISTS download_ip (
+        app_id INTEGER NOT NULL,
+        ip TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        PRIMARY KEY (app_id, ip)
+    )
     """)
-
+    # Таблица заявок на добавление приложений
+    await execute_query("""
+    CREATE TABLE IF NOT EXISTS submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        author TEXT NOT NULL,
+        category_code TEXT NOT NULL,
+        data JSON NOT NULL,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
 
 def get_real_ip(request) -> str:
     """Достаёт реальный IP клиента, учитывая обратный прокси (nginx/Cloudflare)."""
@@ -58,7 +64,6 @@ def get_real_ip(request) -> str:
         or request.headers.get("x-real-ip")
         or (request.client.host if request.client else "unknown")
     )
-
 
 # --- Блокировка IP ---
 
@@ -73,7 +78,6 @@ async def is_ip_blocked(ip: str) -> bool:
         return False
     return True
 
-
 async def ban_ip(ip: str, reason: str, hours: int = 1):
     if not ip:
         return
@@ -83,7 +87,6 @@ async def ban_ip(ip: str, reason: str, hours: int = 1):
         "ON CONFLICT(ip) DO UPDATE SET reason = excluded.reason, until = excluded.until",
         (ip, reason, until),
     )
-
 
 # --- Лимит регистраций по IP (N в сутки) ---
 
@@ -97,7 +100,6 @@ async def check_registration_rate_limit(ip: str, limit_per_day: int = 3) -> bool
         return False
     return True
 
-
 async def increment_registration_ip(ip: str):
     today = date.today().isoformat()
     await execute_query(
@@ -106,7 +108,6 @@ async def increment_registration_ip(ip: str):
         (ip, today),
     )
 
-
 # --- Защита логина от брутфорса ---
 
 async def record_login_attempt(ip: str, username: str, success: bool):
@@ -114,7 +115,6 @@ async def record_login_attempt(ip: str, username: str, success: bool):
         "INSERT INTO login_attempt (ip, username, success, created_at) VALUES (?, ?, ?, ?)",
         (ip, username, int(success), datetime.utcnow().isoformat()),
     )
-
 
 async def check_login_bruteforce(ip: str, window_minutes: int = 15, max_failures: int = 5) -> bool:
     """True — похоже на брутфорс (слишком много неудач подряд за окно)."""
@@ -126,8 +126,7 @@ async def check_login_bruteforce(ip: str, window_minutes: int = 15, max_failures
     )
     return (row["cnt"] if row else 0) >= max_failures
 
-
-# --- Дедупликация скачиваний по IP (одно приложение — один реальный счёт с одного IP) ---
+# --- Дедупликация скачиваний по IP ---
 
 async def record_download_once(app_id: int, user_ip: str) -> bool:
     """
@@ -142,7 +141,6 @@ async def record_download_once(app_id: int, user_ip: str) -> bool:
             (app_id, user_ip, datetime.utcnow().isoformat()),
         )
     except Exception:
-        # UNIQUE constraint (app_id, ip) — уже считали этот IP
         return False
     await execute_query(
         "UPDATE apps SET data = json_set(data, '$.downloads', "
