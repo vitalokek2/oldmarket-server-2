@@ -39,6 +39,13 @@ app.include_router(system.router)
 app.include_router(reviews.router)
 app.include_router(submissions.router)
 
+# Сайт (index.html, app.html, style.css и т.д.) монтируется ПОСЛЕ роутеров —
+# Starlette сначала проверяет точные маршруты (/api/..., /submit), а уже потом
+# отдаёт файлы из site/ как fallback (html=True значит index.html на "/").
+SITE_DIR = os.path.join(BASE_DIR, "site")
+if os.path.exists(SITE_DIR):
+    app.mount("/", StaticFiles(directory=SITE_DIR, html=True), name="site")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)

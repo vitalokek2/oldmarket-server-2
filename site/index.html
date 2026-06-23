@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AltMart</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <a href="/" class="logo">
+      <span class="logo-mark">A</span>
+      AltMart
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/submit">Загрузить приложение</a>
+      <span id="userArea"></span>
+    </nav>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Поиск приложений и игр">
+  </div>
+
+  <div class="category-bar" id="categoryBar">
+    <div class="category-chip active" data-cat="">Все</div>
+    <div class="category-chip" data-game="0">Приложения</div>
+    <div class="category-chip" data-game="1">Игры</div>
+  </div>
+
+  <main>
+    <div class="section-title" id="sectionTitle">Каталог</div>
+    <div class="app-grid" id="appGrid">
+      <div class="empty-state">Загрузка...</div>
+    </div>
+  </main>
+
+  <div class="footer">AltMart — неофициальный форк в память об OldMarket</div>
+
+  <script>
+    const grid = document.getElementById('appGrid');
+    const sectionTitle = document.getElementById('sectionTitle');
+    const searchInput = document.getElementById('searchInput');
+    const categoryBar = document.getElementById('categoryBar');
+
+    let currentGameFilter = null; // null = все, "0" = приложения, "1" = игры
+    let searchTimer = null;
+
+    function renderApps(apps) {
+      if (!apps.length) {
+        grid.innerHTML = '<div class="empty-state">Ничего не найдено</div>';
+        return;
+      }
+      grid.innerHTML = apps.map(appCardHtml).join('');
+    }
+
+    function appCardHtml(app) {
+      const icon = app.icon ? `/html/apps/${app.icon}` : '/default-icon.svg';
+      const rating = app.rating ? `<span class="stars">★ ${app.rating.toFixed(1)}</span>` : '';
+      return `
+        <a class="app-card" href="/app.html?id=${app.id}">
+          <img class="icon" src="${icon}" alt="" loading="lazy" onerror="this.src='/default-icon.svg'">
+          <div class="app-meta">
+            <span class="app-title">${escapeHtml(app.name || 'Без названия')}</span>
+            <span class="app-sub">${escapeHtml(app.category_label || '')}</span>
+            ${rating}
+          </div>
+        </a>`;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function loadApps() {
+      const params = new URLSearchParams();
+      if (currentGameFilter !== null) params.set('is_game', currentGameFilter);
+      sectionTitle.textContent = currentGameFilter === '1' ? 'Игры' : currentGameFilter === '0' ? 'Приложения' : 'Каталог';
+      grid.innerHTML = '<div class="empty-state">Загрузка...</div>';
+      try {
+        const res = await fetch('/api/apps?' + params.toString());
+        const apps = await res.json();
+        renderApps(apps);
+      } catch (e) {
+        grid.innerHTML = '<div class="empty-state">Не удалось загрузить каталог</div>';
+      }
+    }
+
+    async function doSearch(q) {
+      if (!q) { loadApps(); return; }
+      const params = new URLSearchParams({ q });
+      if (currentGameFilter !== null) params.set('is_game', currentGameFilter);
+      sectionTitle.textContent = `Результаты по запросу «${q}»`;
+      grid.innerHTML = '<div class="empty-state">Поиск...</div>';
+      try {
+        const res = await fetch('/api/apps/search?' + params.toString());
+        const apps = await res.json();
+        renderApps(apps);
+      } catch (e) {
+        grid.innerHTML = '<div class="empty-state">Ошибка поиска</div>';
+      }
+    }
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      const q = searchInput.value.trim();
+      searchTimer = setTimeout(() => doSearch(q), 250);
+    });
+
+    categoryBar.addEventListener('click', (e) => {
+      const chip = e.target.closest('.category-chip');
+      if (!chip) return;
+      [...categoryBar.children].forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentGameFilter = chip.dataset.game !== undefined ? chip.dataset.game : null;
+      const q = searchInput.value.trim();
+      q ? doSearch(q) : loadApps();
+    });
+
+    // Узнаём, залогинен ли пользователь, через серверный эндпоинт
+    // (кука HttpOnly, поэтому напрямую из JS её не прочитать — и не нужно).
+    async function renderUserArea() {
+      const userArea = document.getElementById('userArea');
+      try {
+        const res = await fetch('/api/me');
+        if (res.ok) {
+          const me = await res.json();
+          userArea.innerHTML = `<a href="/profile.html">${escapeHtml(me.username)}</a>`;
+          return;
+        }
+      } catch (e) { /* не залогинен — покажем ссылку входа */ }
+      userArea.innerHTML = '<a href="/login.html">Войти</a>';
+    }
+    renderUserArea();
+
+    loadApps();
+  </script>
+</body>
+</html>

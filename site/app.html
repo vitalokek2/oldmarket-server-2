@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AltMart</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <a href="/" class="back-link">←</a>
+    <a href="/" class="logo">
+      <span class="logo-mark">A</span>
+      AltMart
+    </a>
+    <span></span>
+  </header>
+
+  <div id="appContent">
+    <div class="empty-state">Загрузка...</div>
+  </div>
+
+  <div class="footer">AltMart — неофициальный форк в память об OldMarket</div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const appId = params.get('id');
+    const content = document.getElementById('appContent');
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    function starsHtml(rating) {
+      if (!rating) return '<span class="stars">Нет оценок</span>';
+      const full = Math.round(rating);
+      return `<span class="stars">${'★'.repeat(full)}${'☆'.repeat(5 - full)} ${rating.toFixed(1)}</span>`;
+    }
+
+    async function loadApp() {
+      if (!appId) {
+        content.innerHTML = '<div class="empty-state">Приложение не указано</div>';
+        return;
+      }
+      try {
+        const res = await fetch(`/api/app/${appId}`);
+        if (!res.ok) throw new Error('not found');
+        const app = await res.json();
+        render(app);
+        loadReviews();
+      } catch (e) {
+        content.innerHTML = '<div class="empty-state">Приложение не найдено</div>';
+      }
+    }
+
+    function render(app) {
+      const icon = app.icon ? `/html/apps/${app.icon}` : '/default-icon.svg';
+      const screenshots = (app.screenshots || []).map(s =>
+        `<img src="/html/screenshots/${s}" alt="screenshot">`
+      ).join('');
+
+      content.innerHTML = `
+        <div class="app-header">
+          <img class="icon" src="${icon}" onerror="this.src='/default-icon.svg'">
+          <div class="info">
+            <div class="name">${escapeHtml(app.name)}</div>
+            <div class="author">${escapeHtml(app.author || '')}</div>
+          </div>
+          <a class="install-btn" href="/api/download/${app.id}">Установить</a>
+        </div>
+        <div class="stat-row">
+          <div><strong>${app.downloads || 0}</strong>загрузок</div>
+          <div><strong>${app.version || '—'}</strong>версия</div>
+          <div><strong>${app.api ? 'Android ' + app.api + '+' : '—'}</strong>требования</div>
+          <div>${starsHtml(app.rating)}</div>
+        </div>
+        ${screenshots ? `<div class="screenshots">${screenshots}</div>` : ''}
+        <div class="description">
+          <h3>Описание</h3>
+          <p>${escapeHtml(app.description || 'Описание отсутствует.')}</p>
+        </div>
+        <div class="reviews" id="reviewsBlock">
+          <h3>Отзывы (${app.review_count || 0})</h3>
+          <div id="reviewsList"><div class="empty-state">Загрузка отзывов...</div></div>
+          <form class="review-form" id="reviewForm">
+            <select name="rating" required>
+              <option value="">Оценка</option>
+              <option value="5">★★★★★</option>
+              <option value="4">★★★★</option>
+              <option value="3">★★★</option>
+              <option value="2">★★</option>
+              <option value="1">★</option>
+            </select>
+            <textarea name="comment" placeholder="Ваш отзыв" rows="3" required></textarea>
+            <button type="submit">Оставить отзыв</button>
+          </form>
+        </div>
+      `;
+
+      document.getElementById('reviewForm').addEventListener('submit', submitReview);
+    }
+
+    async function loadReviews() {
+      try {
+        const res = await fetch(`/api/app/${appId}/reviews`);
+        const reviews = await res.json();
+        const list = document.getElementById('reviewsList');
+        if (!reviews.length) {
+          list.innerHTML = '<div class="empty-state">Отзывов пока нет</div>';
+          return;
+        }
+        list.innerHTML = reviews.map(r => `
+          <div class="review">
+            <div class="review-user">${escapeHtml(r.username)} — ${'★'.repeat(r.rating)}</div>
+            <div class="review-text">${escapeHtml(r.comment)}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('reviewsList').innerHTML = '<div class="empty-state">Не удалось загрузить отзывы</div>';
+      }
+    }
+
+    async function submitReview(e) {
+      e.preventDefault();
+      const form = e.target;
+
+      let me;
+      try {
+        const meRes = await fetch('/api/me');
+        if (!meRes.ok) throw new Error('not logged in');
+        me = await meRes.json();
+      } catch (err) {
+        alert('Войдите в аккаунт, чтобы оставить отзыв');
+        location.href = '/login.html';
+        return;
+      }
+
+      const rating = parseInt(form.rating.value, 10);
+      const comment = form.comment.value.trim();
+      try {
+        const res = await fetch(`/api/app/${appId}/review`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: me.id, rating, comment })
+        });
+        const data = await res.json();
+        if (data.success) {
+          form.reset();
+          loadReviews();
+        } else {
+          alert(data.message || 'Ошибка при отправке отзыва');
+        }
+      } catch (err) {
+        alert('Ошибка сети');
+      }
+    }
+
+    loadApp();
+  </script>
+</body>
+</html>

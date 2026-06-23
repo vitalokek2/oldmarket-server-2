@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — AltMart</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .auth-wrap {
+      max-width: 360px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 6px;
+      padding: 24px;
+    }
+    .auth-wrap h2 { margin-top: 0; text-align: center; }
+    .auth-tabs { display: flex; margin-bottom: 16px; border-radius: 4px; overflow: hidden; border: 1px solid #ccc; }
+    .auth-tabs button {
+      flex: 1; padding: 10px; border: none; background: #eee; cursor: pointer; font-weight: bold;
+    }
+    .auth-tabs button.active { background: var(--accent); color: #fff; }
+    .auth-form { display: flex; flex-direction: column; gap: 10px; }
+    .auth-form input {
+      padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px;
+    }
+    .auth-form button[type="submit"] {
+      background: var(--accent); color: #fff; border: none; padding: 10px;
+      border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 15px;
+    }
+    .auth-message { font-size: 13px; text-align: center; }
+    .auth-message.error { color: #c0392b; }
+    .auth-message.success { color: #2e7d32; }
+  </style>
+</head>
+<body>
+  <header class="topnav">
+    <a href="/" class="back-link">←</a>
+    <a href="/" class="logo">
+      <span class="logo-mark">A</span>
+      AltMart
+    </a>
+    <span></span>
+  </header>
+
+  <div class="auth-wrap">
+    <div class="auth-tabs">
+      <button id="tabLogin" class="active">Вход</button>
+      <button id="tabRegister">Регистрация</button>
+    </div>
+
+    <form class="auth-form" id="authForm">
+      <input type="text" name="username" placeholder="Логин" required minlength="3">
+      <input type="password" name="password" placeholder="Пароль" required minlength="4">
+      <button type="submit" id="submitBtn">Войти</button>
+      <div class="auth-message" id="authMessage"></div>
+    </form>
+  </div>
+
+  <script>
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('authForm');
+    const messageEl = document.getElementById('authMessage');
+
+    let mode = 'login';
+
+    function setMode(newMode) {
+      mode = newMode;
+      tabLogin.classList.toggle('active', mode === 'login');
+      tabRegister.classList.toggle('active', mode === 'register');
+      submitBtn.textContent = mode === 'login' ? 'Войти' : 'Создать аккаунт';
+      messageEl.textContent = '';
+    }
+
+    tabLogin.addEventListener('click', () => setMode('login'));
+    tabRegister.addEventListener('click', () => setMode('register'));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = form.username.value.trim();
+      const password = form.password.value;
+      const endpoint = mode === 'login' ? '/api/login' : '/api/register';
+
+      messageEl.textContent = '';
+      messageEl.className = 'auth-message';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          if (mode === 'login') {
+            location.href = '/';
+          } else {
+            messageEl.textContent = 'Аккаунт создан! Теперь войдите.';
+            messageEl.classList.add('success');
+            setMode('login');
+          }
+        } else {
+          messageEl.textContent = data.message || 'Ошибка';
+          messageEl.classList.add('error');
+        }
+      } catch (err) {
+        messageEl.textContent = 'Ошибка сети';
+        messageEl.classList.add('error');
+      }
+    });
+  </script>
+</body>
+</html>

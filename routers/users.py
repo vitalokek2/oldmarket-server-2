@@ -23,6 +23,29 @@ AVATARS = [
 ]
 
 
+@router.get("/me")
+async def get_me(request: Request):
+    """
+    Отдаёт текущего пользователя по HttpOnly-куке session_user_id.
+    Кука не читается из JS напрямую (это и есть смысл httponly) —
+    фронтенд должен спрашивать у сервера, кто залогинен.
+    """
+    user_id = request.cookies.get("session_user_id")
+    if not user_id:
+        return JSONResponse(status_code=401, content={"success": False, "message": "Не авторизован"})
+    user = await fetch_one("SELECT id, username, avatar FROM users WHERE id = ?", (user_id,))
+    if not user:
+        return JSONResponse(status_code=401, content={"success": False, "message": "Не авторизован"})
+    return {"success": True, "id": user["id"], "username": user["username"], "avatar": user["avatar"]}
+
+
+@router.post("/logout")
+async def logout():
+    resp = JSONResponse(content={"success": True})
+    resp.delete_cookie("session_user_id")
+    return resp
+
+
 @router.post("/login")
 async def login(request: Request, response: Response):
     ip = get_real_ip(request)
