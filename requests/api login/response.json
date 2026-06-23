@@ -1,0 +1,23 @@
+{
+  "app": "com.oldmarketdark",
+  "code": 200,
+  "duration": "702ms",
+  "headers": {
+    "Server": "Werkzeug/3.1.6 Python/3.10.12",
+    "Date": "Sun, 10 May 2026 08:32:15 GMT",
+    "Content-Type": "application/json",
+    "Content-Length": "55",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+    "Vary": "Cookie",
+    "Set-Cookie": "session\u003deyJ1c2VyX2lkIjo1MDN9.agBCjw.lOV6NlfI2txfSDTNxB0RrkseJqg; HttpOnly; Path\u003d/",
+    "Connection": "close"
+  },
+  "message": "OK",
+  "protocol": "HTTP/1.1",
+  "remoteIp": "94.156.115.120",
+  "remotePort": 5000,
+  "sessionId": "ec293897-bd4b-4394-bd63-2eb9e9cc3410",
+  "time": "2026-05-10 11:32:13"
+}

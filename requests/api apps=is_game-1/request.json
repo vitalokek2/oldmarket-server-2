@@ -1,0 +1,17 @@
+{
+  "app": "com.oldmarketdark",
+  "duration": "422ms",
+  "headers": {
+    "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-J120F Build/LMY47X)",
+    "Host": "94.156.115.120:5000",
+    "Connection": "Keep-Alive",
+    "Accept-Encoding": "gzip"
+  },
+  "method": "GET",
+  "protocol": "HTTP/1.1",
+  "remoteIp": "94.156.115.120",
+  "remotePort": 5000,
+  "sessionId": "ed71f542-a5bf-43af-a24c-5f427bebdb8d",
+  "time": "2026-05-10 11:30:37",
+  "url": "http://94.156.115.120:5000/api/apps?is_game\u003d1"
+}

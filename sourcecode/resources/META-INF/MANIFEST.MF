@@ -1,0 +1,216 @@
+Manifest-Version: 1.0
+Created-By: 1.0 (Android)
+
+Name: res/drawable/bg_segment_button.xml
+SHA1-Digest: 1Am1SHtkZoq3d6MS2yKSERi0XRw=
+
+Name: res/drawable/bg_market_icon.xml
+SHA1-Digest: 5Zm6Ebh/blEA1i4CbwrYYL8YTeQ=
+
+Name: res/drawable/bg_market_icon_selector.xml
+SHA1-Digest: jqVpyojQVEdzvJzB4D4wwB4yoT8=
+
+Name: res/drawable/bg_press_item.xml
+SHA1-Digest: ATEbiFa1D0E6vtNEbenfeleiftI=
+
+Name: res/drawable/ic_search_selected.png
+SHA1-Digest: zJjHUtrxBPzt4ZxMdDNHHUk0xEU=
+
+Name: res/drawable/bg_transparent_button.xml
+SHA1-Digest: 3KiMoGGmZXgaQSEgQlnSb6KMxMs=
+
+Name: res/drawable/ic_market_bag_selected.png
+SHA1-Digest: 8PswWQ26Y1dgxFJXh26ZOfzvRBk=
+
+Name: res/drawable/bg_segment_bar.xml
+SHA1-Digest: BZ7vZrstHQVmfYHBiELUuX4yN14=
+
+Name: res/drawable/stat_sys_install_complete.png
+SHA1-Digest: edopdlgMG8610TFWTLNEt9J4cWM=
+
+Name: res/layout/activity_downloads.xml
+SHA1-Digest: CuynDX8XM01PhbN/Cf2pTlbB8ek=
+
+Name: res/drawable/ic_dislike.png
+SHA1-Digest: dxKmteD8uLD+UQZCVMtbEKUDLRY=
+
+Name: res/drawable/btn_strip_selected.9.png
+SHA1-Digest: gyO25t+bATWmzjfgwitpIRvI6D0=
+
+Name: res/drawable/ic_comment.png
+SHA1-Digest: nUN5hmjm72V1W4DOaYz5pGVOGWM=
+
+Name: res/layout/activity_user_profile.xml
+SHA1-Digest: Y/aQAsEoeWBXzzl6jKl+P4cvAMo=
+
+Name: res/drawable/btn_strip_normal.9.png
+SHA1-Digest: 5woY/8OD3V3uYqK8nPE8DqSM5i8=
+
+Name: res/layout/activity_login.xml
+SHA1-Digest: DGAMyptcxPZ0dGuVROJYeb5+hJg=
+
+Name: res/drawable-nodpi/app_item_background.png
+SHA1-Digest: FZ6knQjBXbeoBkyscdmY1POoLTw=
+
+Name: res/drawable/reaction_active.xml
+SHA1-Digest: ZVRDyqL4OmnzTvs4tulN4sbNscY=
+
+Name: res/drawable/ic_menu_settings_custom.png
+SHA1-Digest: acCll2pAja2zl35BQmljrzLtiGQ=
+
+Name: res/drawable/banner_placeholder.png
+SHA1-Digest: HJVxqhzRIICc/EEkxv5nm4VpIjk=
+
+Name: res/drawable/bg_bottombar.xml
+SHA1-Digest: vjp+J7pS0YIMnFlrk7X8FRcV3GY=
+
+Name: res/drawable/bg_tab_button.xml
+SHA1-Digest: n6P1jGmjtl8WWx+FJR8oLabctA8=
+
+Name: res/layout/main_list_header.xml
+SHA1-Digest: DVpaSj9t87QkaJI8vMuuarlLo0Y=
+
+Name: res/drawable/btn_strip_mark_on.png
+SHA1-Digest: t+vj2jbBf9XfVSAtAk2PMQfBTww=
+
+Name: res/drawable/ic_menu_downloads.png
+SHA1-Digest: SVUG5i6bWIeEIo38uqqRfBwvnTk=
+
+Name: res/layout/activity_category_apps.xml
+SHA1-Digest: a1WXmySz2Mqu1e04nAsKiFywzy8=
+
+Name: res/drawable/ic_market_bag_normal.png
+SHA1-Digest: hdSsYexKdBszF1FRJ3i3m9LfR4k=
+
+Name: res/layout/activity_app_detail.xml
+SHA1-Digest: V71A2dtCKyVOlsdotdfUUVBniuQ=
+
+Name: res/layout/app_detail_header.xml
+SHA1-Digest: ZndskAX/PxI4a4prTi4dRyDygs4=
+
+Name: res/drawable/stat_notify_marketplace_update.png
+SHA1-Digest: dpEMsEqi5yNTO3KM8OefySMcusk=
+
+Name: resources.arsc
+SHA1-Digest: nWauv2dQ+vEOphb//AsSjg3nIp8=
+
+Name: res/drawable/bg_topbar_gray.xml
+SHA1-Digest: 7NQOvIDLauJ+xwqxYvq9pteynPs=
+
+Name: res/layout/list_item_review.xml
+SHA1-Digest: FkhSwfvFAXoUouK/OREBAL7SSfE=
+
+Name: res/drawable/btn_strip_divider.9.png
+SHA1-Digest: 8dNB/XGVHowF9lEJct1PMCpTaKA=
+
+Name: res/drawable/topbar_pattern.xml
+SHA1-Digest: CwSKuropN/QX5NexZMYD1+be5tM=
+
+Name: res/drawable/logo.png
+SHA1-Digest: s0C2xQd08wKwoOa2wgUGOfaZY9E=
+
+Name: AndroidManifest.xml
+SHA1-Digest: mKfNRC8KjA4GrdCN1t7WlfmmPeM=
+
+Name: res/drawable/bg_promotion_main.png
+SHA1-Digest: bnYxNblooB2anjuPA/kgDT1p4oc=
+
+Name: res/layout/notification_download.xml
+SHA1-Digest: ikf/QqZsPeALXsImO9Mijq9atds=
+
+Name: res/drawable/market_header.9.png
+SHA1-Digest: DTZKEEo74xDDyhvf3SRyr59tqtU=
+
+Name: res/drawable/ic_launcher.png
+SHA1-Digest: 3TJ03y2+vJZgc77Pljj7/m3YGdE=
+
+Name: res/layout/view_promotion_app.xml
+SHA1-Digest: hDZogVXvrKpJUanhynUWO7c6ZNQ=
+
+Name: res/drawable/ic_search.png
+SHA1-Digest: d93V7YciWZQjAxoSt/bP2OgrUS4=
+
+Name: res/drawable/ic_like.png
+SHA1-Digest: 4PRus3FPb7riaVOYJ4TEey6AvOc=
+
+Name: res/drawable/top_pattern.png
+SHA1-Digest: 6OmnSuakEhtPW+EWTqFLe0zy2xQ=
+
+Name: res/layout/activity_search.xml
+SHA1-Digest: I/eP/dYa5o+SIdBwHcEd8T5KMyI=
+
+Name: res/drawable/ic_market_bag_pressed.png
+SHA1-Digest: HZnw12tWzkw4B22t4I86cBMS8ww=
+
+Name: res/drawable/ic_search_normal.png
+SHA1-Digest: d93V7YciWZQjAxoSt/bP2OgrUS4=
+
+Name: res/drawable/ic_search_pressed.png
+SHA1-Digest: Mj6bx7nQwXkbrt1Ik9QocZdcul8=
+
+Name: res/layout/list_item_section.xml
+SHA1-Digest: /9Dt1suLNrAr1++8+oGqfxrrnDg=
+
+Name: res/layout/activity_category_list.xml
+SHA1-Digest: 5OYQZ/R8jQOG2zKhGP3KncWBEJI=
+
+Name: res/drawable/btn_strip_mark_off.png
+SHA1-Digest: iOiPEhm/BC9r4Wb5yUSY0AR8Unc=
+
+Name: res/layout/activity_settings.xml
+SHA1-Digest: STKRLs4SrbPc1OBs4V+gPEHmEFo=
+
+Name: res/drawable/reaction_normal.xml
+SHA1-Digest: sr7vtbz19vKoRALplNDbTxDo4Lc=
+
+Name: res/drawable/ic_dialog_flag.png
+SHA1-Digest: PfOE5VfOVX3kEfh79vn+7yHQEzQ=
+
+Name: res/layout/activity_main.xml
+SHA1-Digest: suf+BVDr7wIMZp/3BwNmzcYCZRc=
+
+Name: res/drawable/ic_search_selector.xml
+SHA1-Digest: tVun4wYO7gIbKZlY2RTssOnl1p0=
+
+Name: res/drawable/bg_section_header.xml
+SHA1-Digest: a+EJoQxND3lpWcQcMcPdcNkq3F4=
+
+Name: res/layout/list_item_category.xml
+SHA1-Digest: g0xs6ZTJSL78HKotyAWu1pmjAFM=
+
+Name: res/drawable/bottombar_portrait_565.png
+SHA1-Digest: wftojGMrok2OX+MqcWFw/pzjBj0=
+
+Name: assets/fonts/storopia.ttf
+SHA1-Digest: TWAX3vWEQJiwJuB2E1KSKT0M8pg=
+
+Name: res/layout/activity_profile.xml
+SHA1-Digest: VSo19I3XGJOvqOmF/u1m2ir5xnc=
+
+Name: res/layout/notification_simple.xml
+SHA1-Digest: 5qsG7z+3XEpfnwqsN0DTVL0aStI=
+
+Name: res/drawable/market_android_logo.png
+SHA1-Digest: 6CzdiaJbtoFSedCwk4SErsSUriU=
+
+Name: res/drawable/icon_placeholder.png
+SHA1-Digest: pkyKmPcCakmrCt0RpbEehs+py/8=
+
+Name: res/drawable/btn_strip_pressed.9.png
+SHA1-Digest: 62knWU3nCACD8zaGXoD+T5kxuXc=
+
+Name: res/layout/list_item_app.xml
+SHA1-Digest: E/rNvpVArwipUO3yMwPBObK6nEY=
+
+Name: classes.dex
+SHA1-Digest: qqkWYBiLB6SOvj2iCHJcgVQkAbg=
+
+Name: res/drawable/bg_promotion_app.png
+SHA1-Digest: /cN4RECpD0mQhalA4HqekvR2kyE=
+
+Name: res/drawable/ic_menu_account.png
+SHA1-Digest: Skdq1ymw5c3/PCV1gGZ2OYTWaCA=
+
+Name: res/layout/list_item_current_download.xml
+SHA1-Digest: QFyiUcpQChf+YvJKyd+xi2TNr4U=
+

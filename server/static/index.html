@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AltMart / OldMarket Dashboard</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    
+    <style>
+        :root {
+            --bg-body: #e9e9e9; --bg-card: #ffffff; --text-main: #333333;
+            --accent-teal: #4dbccb; --accent-purple: #8b5cf6; --border-color: #d1d1d1;
+            --accent-orange: #f97316;
+        }
+
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
+        
+        .top-bar { background: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; flex-wrap: wrap; gap: 10px; }
+        .server-config { display: flex; gap: 8px; align-items: center; }
+        .server-input { background: #444; color: white; border: 1px solid #555; padding: 6px 12px; border-radius: 6px; font-size: 13px; width: 240px; transition: border 0.2s; }
+        .server-input:focus { border-color: var(--accent-teal); outline: none; }
+        
+        .nav-buttons { display: flex; gap: 10px; align-items: center; }
+        
+        .mode-btn { background: #444; color: #ccc; border: 1px solid #555; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .mode-btn:hover { background: #555; color: white; }
+        .mode-btn.active { background: var(--accent-teal); color: white; border-color: var(--accent-teal); }
+        .mode-btn.active.admin-mode { background: var(--accent-purple); border-color: var(--accent-purple); }
+
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+        
+        .warning-banner { background: #ffedd5; border-left: 4px solid var(--accent-orange); color: #c2410c; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 500; display: none; }
+
+        .card { background: var(--bg-card); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; }
+        
+        .chart-container { position: relative; height: 320px; width: 100%; }
+        
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-weight: 600; font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; }
+        
+        .btn-submit { background: var(--accent-purple); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-submit:hover { opacity: 0.9; }
+
+        .hidden { display: none !important; }
+        
+        .search-wrapper { display: flex; gap: 10px; margin-bottom: 15px; }
+        .search-wrapper input { flex: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; }
+        .search-wrapper select { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; }
+        
+        .category-block { margin-bottom: 25px; }
+        .category-block.open .category-title { border-color: var(--accent-purple); }
+        .category-title { font-size: 18px; font-weight: bold; border-bottom: 2px solid var(--accent-teal); padding-bottom: 5px; margin-bottom: 10px; transition: border 0.2s; }
+        .app-list { display: flex; flex-direction: column; gap: 8px; }
+        .app-item { display: flex; align-items: center; justify-content: space-between; background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #e5e5e5; }
+        .app-info { display: flex; align-items: center; gap: 12px; }
+        .app-icon-placeholder { width: 32px; height: 32px; background: #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h2 style="margin:0; font-size: 20px;">AltMart Дистанционный Пульт</h2>
+    
+    <div class="server-config">
+        <span style="font-size: 13px; color: #aaa;">Узел API:</span>
+        <input type="text" id="server-url-input" class="server-input" value="http://oldmarket.store:5000" onchange="loadData()">
+        <button class="mode-btn" onclick="loadData()" style="padding: 6px 10px; font-size: 12px;">Подключить</button>
+    </div>
+
+    <div class="nav-buttons">
+        <button class="mode-btn active" id="btn-stats" onclick="switchMode('stats')">📊 Аналитика</button>
+        <button class="mode-btn admin-mode" id="btn-admin" onclick="switchMode('admin')">⚙️ Управление</button>
+    </div>
+</div>
+
+<div class="container">
+    
+    <div class="warning-banner" id="oldmarket-warning">
+        ⚠️ <strong>Режим внешнего API:</strong> Текущий функционал оптимизирован под спецификацию AltMart API. На старых серверах структуры <i>oldmarket.store</i> загрузка файлов и модификация таблиц может работать некорректно.
+    </div>
+
+    <div id="section-stats">
+        <div class="grid-2">
+            <div class="card">
+                <h3>Распределение по категориям</h3>
+                <div class="chart-container">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Версии Android</h3>
+                <div class="chart-container">
+                    <canvas id="androidChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 id="list-title" style="margin:0;">Все приложения на сервере</h3>
+                <button id="reset-filter" class="mode-btn hidden" onclick="resetFilter()" style="padding: 5px 10px; font-size: 12px;">Сбросить фильтр</button>
+            </div>
+            
+            <div class="search-wrapper">
+                <input type="text" id="main-search" placeholder="Поиск по базе данных..." oninput="runSearch()">
+                <select id="search-mode" onchange="runSearch()">
+                    <option value="name">По названию</option>
+                    <option value="android">По версии Android</option>
+                </select>
+            </div>
+
+            <div id="apps-container">
+                <div class="category-block" id="block-tools">
+                    <div class="category-title">Системные / Инструменты</div>
+                    <div class="app-list" id="list-tools"></div>
+                </div>
+                <div class="category-block" id="block-games">
+                    <div class="category-title">Игры</div>
+                    <div class="app-list" id="list-games"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-admin" class="hidden">
+        <div class="grid-2">
+            <div class="card">
+                <h3>🚀 Добавить новое приложение</h3>
+                <form id="upload-form" onsubmit="uploadApp(event)">
+                    <div class="form-group">
+                        <label>Название приложения *</label>
+                        <input type="text" id="app_name" required placeholder="Например: Telegram X">
+                    </div>
+                    <div class="form-group">
+                        <label>Имя пакета (Package ID) *</label>
+                        <input type="text" id="app_package" required placeholder="Например: org.thunderdog.challegram">
+                    </div>
+                    <div class="form-group">
+                        <label>Тип контента</label>
+                        <select id="app_is_game">
+                            <option value="0">Программа / Инструмент</option>
+                            <option value="1">Игра</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Файл приложения (.apk) *</label>
+                        <input type="file" id="app_apk" accept=".apk" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Иконка приложения *</label>
+                        <input type="file" id="app_icon" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Описание</label>
+                        <textarea id="app_desc" rows="3" placeholder="Краткое описание возможностей..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Отправить по API</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Состояние подключенного инстанса</h3>
+                <div style="background: #f4f4f5; padding: 15px; border-radius: 6px; border: 1px solid #e4e4e7; margin-bottom: 20px;">
+                    <p style="margin: 5px 0;"><strong>Статус API:</strong> <span id="api-status-text" style="color: gray; font-weight: bold;">Проверка...</span></p>
+                    <p style="margin: 5px 0;"><strong>Адрес узла:</strong> <span id="api-current-node" style="font-family: monospace; font-size: 13px;">-</span></p>
+                    <p style="margin: 5px 0;"><strong>Всего пакетов:</strong> <span id="stat-total-count">0</span></p>
+                    <p style="margin: 5px 0;"><strong>Из них игр:</strong> <span id="stat-games-count">0</span></p>
+                </div>
+                
+                <h3>Быстрые действия</h3>
+                <p style="font-size: 13px; color: #666;">Список зарегистрированных пакетов на выбранном узле.</p>
+                <div id="admin-raw-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 10px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let rawAppsData = [];
+    let categoriesChart = null;
+    let androidChart = null;
+    let currentChartFilter = null;
+
+    // Валидация URL хоста
+    function getServerUrl() {
+        let inputVal = document.getElementById('server-url-input').value.trim();
+        if (!inputVal) {
+            inputVal = 'http://oldmarket.store:5000';
+            document.getElementById('server-url-input').value = inputVal;
+        }
+        if (!/^https?:\/\//i.test(inputVal)) {
+            inputVal = 'http://' + inputVal;
+        }
+        if (inputVal.endsWith('/')) {
+            inputVal = inputVal.slice(0, -1);
+        }
+        return inputVal;
+    }
+
+    function switchMode(mode) {
+        document.getElementById('btn-stats').classList.remove('active');
+        document.getElementById('btn-admin').classList.remove('active');
+        document.getElementById('section-stats').classList.add('hidden');
+        document.getElementById('section-admin').classList.add('hidden');
+        document.getElementById('oldmarket-warning').style.display = 'none';
+
+        if(mode === 'stats') {
+            document.getElementById('btn-stats').classList.add('active');
+            document.getElementById('section-stats').classList.remove('hidden');
+        } else {
+            document.getElementById('btn-admin').classList.add('active');
+            document.getElementById('section-admin').classList.remove('hidden');
+            document.getElementById('oldmarket-warning').style.display = 'block';
+            renderAdminList();
+        }
+    }
+
+    // Загрузка с защитой от некорректных типов ответов API
+    async function loadData() {
+        const targetUrl = getServerUrl();
+        const statusText = document.getElementById('api-status-text');
+        const nodeText = document.getElementById('api-current-node');
+        
+        nodeText.innerText = targetUrl;
+        statusText.innerText = "Подключение...";
+        statusText.style.color = "orange";
+
+        try {
+            const res = await fetch(`${targetUrl}/api/apps`, { method: 'GET' });
+            if(!res.ok) throw new Error(`Код ответа: ${res.status}`);
+            
+            const data = await res.json();
+            
+            // Если сервер вернул ошибку вместо массива данных
+            if (!Array.isArray(data)) {
+                throw new Error("API вернул объект вместо массива приложений");
+            }
+            
+            rawAppsData = data;
+            statusText.innerText = "Online";
+            statusText.style.color = "green";
+
+            document.getElementById('stat-total-count').innerText = rawAppsData.length;
+            document.getElementById('stat-games-count').innerText = rawAppsData.filter(a => a.is_game === 1).length;
+
+            initCharts();
+            renderAppsList();
+            if(!document.getElementById('section-admin').classList.contains('hidden')) {
+                renderAdminList();
+            }
+        } catch (e) {
+            console.error("Критическая ошибка пульта API:", e);
+            statusText.innerText = "Offline (Сбой)";
+            statusText.style.color = "red";
+            rawAppsData = [];
+            document.getElementById('stat-total-count').innerText = "0";
+            document.getElementById('stat-games-count').innerText = "0";
+            clearUI();
+        }
+    }
+
+    function clearUI() {
+        document.getElementById('list-tools').innerHTML = '<p style="color:#aaa; padding:10px;">Узел недоступен</p>';
+        document.getElementById('list-games').innerHTML = '<p style="color:#aaa; padding:10px;">Узел недоступен</p>';
+        document.getElementById('admin-raw-list').innerHTML = '<p style="color:#ef4444; text-align:center;">Ошибка CORS или хост завершил соединение сбоем.</p>';
+        if (categoriesChart) { categoriesChart.destroy(); categoriesChart = null; }
+        if (androidChart) { androidChart.destroy(); androidChart = null; }
+    }
+
+    function renderAppsList() {
+        const toolsList = document.getElementById('list-tools');
+        const gamesList = document.getElementById('list-games');
+        toolsList.innerHTML = '';
+        gamesList.innerHTML = '';
+        
+        if (rawAppsData.length === 0) return;
+        const targetUrl = getServerUrl();
+
+        rawAppsData.forEach(app => {
+            const item = document.createElement('div');
+            item.className = 'app-item';
+            item.dataset.name = (app.name || '').toLowerCase();
+            item.dataset.android = app.min_android || '5.0+';
+            item.dataset.is_game = app.is_game || 0;
+            
+            let iconHtml = `<div class="app-icon-placeholder">${(app.name || 'A')[0]}</div>`;
+            if (app.icon) {
+                const fullIconUrl = app.icon.startsWith('http') ? app.icon : `${targetUrl}${app.icon}`;
+                iconHtml = `<img src="${fullIconUrl}" style="width:32px; height:32px; border-radius:6px;" onerror="this.style.display='none'">`;
+            }
+
+            item.innerHTML = `
+                <div class="app-info">
+                    ${iconHtml}
+                    <div>
+                        <strong>${app.name || 'Без названия'}</strong> <span style="font-size:11px; color:#666;">(${app.package || 'no.pkg'})</span>
+                        <br><span style="font-size:12px; color:#888;">Android: ${app.min_android || '5.0+'} | Скачиваний: ${app.downloads || 0}</span>
+                    </div>
+                </div>
+            `;
+            
+            if(app.is_game === 1) {
+                gamesList.appendChild(item);
+            } else {
+                toolsList.appendChild(item);
+            }
+        });
+        
+        // Сразу синхронизируем видимость контейнеров категорий
+        runSearch();
+    }
+
+    function renderAdminList() {
+        const container = document.getElementById('admin-raw-list');
+        container.innerHTML = '';
+        if(rawAppsData.length === 0) {
+            container.innerHTML = '<p style="color:#888; text-align:center;">Список пуст</p>';
+            return;
+        }
+        rawAppsData.forEach(app => {
+            const d = document.createElement('div');
+            d.style = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:4px; gap:10px;';
+            d.innerHTML = `
+                <div style="flex:1; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><strong>${app.name}</strong> <span style="color:#777; font-size:12px;">(${app.package})</span></div>
+                <button onclick="deleteApp(${app.id})" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:12px; flex-shrink:0;">Удалить</button>
+            `;
+            container.appendChild(d);
+        });
+    }
+
+    async function uploadApp(event) {
+        event.preventDefault();
+        const targetUrl = getServerUrl();
+        
+        const formData = new FormData();
+        formData.append('name', document.getElementById('app_name').value);
+        formData.append('package', document.getElementById('app_package').value);
+        formData.append('is_game', parseInt(document.getElementById('app_is_game').value));
+        formData.append('apk', document.getElementById('app_apk').files[0]);
+        formData.append('icon', document.getElementById('app_icon').files[0]);
+        formData.append('description', document.getElementById('app_desc').value);
+
+        try {
+            const res = await fetch(`${targetUrl}/api/apps/upload`, { method: 'POST', body: formData });
+            if(res.ok) {
+                alert('Успешно отправлено на узел: ' + targetUrl);
+                document.getElementById('upload-form').reset();
+                loadData();
+            } else {
+                let errDetail = 'Неизвестная ошибка обработки';
+                try {
+                    const err = await res.json();
+                    errDetail = err.detail || JSON.stringify(err);
+                } catch(e) {}
+                alert('Сервер вернул ошибку: ' + errDetail);
+            }
+        } catch (e) {
+            alert('Сбой сетевого запроса! Проверьте CORS или доступность порта.\nДетали: ' + e);
+        }
+    }
+
+    async function deleteApp(id) {
+        if(!confirm('Отправить команду DELETE для ID ' + id + '?')) return;
+        alert('Для полноценного удаления добавьте эндпоинт DELETE в ваш файл main.py.');
+    }
+
+    // Тщательно выверенная фильтрация с динамическим скрытием пустых .category-block
+    function runSearch() {
+        const query = document.getElementById('main-search').value.toLowerCase();
+        const mode = document.getElementById('search-mode').value;
+        
+        document.querySelectorAll('.category-block').forEach(b => {
+            let hasVisible = false;
+            
+            b.querySelectorAll('.app-item').forEach(item => {
+                const name = item.dataset.name || '';
+                const android = item.dataset.android || '';
+                const isGame = parseInt(item.dataset.is_game || '0');
+                
+                let matchesSearch = true;
+                if(query) {
+                    if(mode === 'name' && !name.includes(query)) matchesSearch = false;
+                    if(mode === 'android' && !android.includes(query)) matchesSearch = false;
+                }
+                
+                let matchesChart = true;
+                if(currentChartFilter) {
+                    if(currentChartFilter === 'Игры' && isGame !== 1) matchesChart = false;
+                    if(currentChartFilter === 'Программы' && isGame === 1) matchesChart = false;
+                }
+
+                if(matchesSearch && matchesChart) {
+                    item.style.display = 'flex';
+                    hasVisible = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Скрываем весь блок категории, если в ней нет подходящих элементов
+            b.style.display = hasVisible ? 'block' : 'none';
+            
+            // Управляем анимационным/стилевым классом open (как в оригинале)
+            if(query || currentChartFilter) {
+                b.classList.add('open');
+            } else {
+                b.classList.remove('open');
+            }
+        });
+    }
+
+    function applyChartFilter(label) {
+        currentChartFilter = label;
+        document.getElementById('list-title').innerText = "Фильтр: " + label;
+        document.getElementById('reset-filter').classList.remove('hidden');
+        runSearch();
+    }
+
+    function resetFilter() {
+        currentChartFilter = null;
+        document.getElementById('main-search').value = "";
+        document.getElementById('list-title').innerText = "Все приложения на сервере";
+        document.getElementById('reset-filter').classList.add('hidden');
+        runSearch();
+    }
+
+    function initCharts() {
+        if (rawAppsData.length === 0) return;
+        
+        const totalApps = rawAppsData.length;
+        const gamesCount = rawAppsData.filter(a => a.is_game === 1).length;
+        const toolsCount = totalApps - gamesCount;
+
+        const androidVersions = {};
+        rawAppsData.forEach(a => {
+            const v = a.min_android || '5.0+';
+            androidVersions[v] = (androidVersions[v] || 0) + 1;
+        });
+
+        // Корректное уничтожение старых инстансов перед пересозданием
+        if (categoriesChart) { categoriesChart.destroy(); categoriesChart = null; }
+        if (androidChart) { androidChart.destroy(); androidChart = null; }
+
+        const ctxCat = document.getElementById('categoriesChart').getContext('2d');
+        categoriesChart = new Chart(ctxCat, {
+            type: 'pie',
+            data: {
+                labels: ['Программы', 'Игры'],
+                datasets: [{
+                    data: [toolsCount, gamesCount],
+                    backgroundColor: ['#4dbccb', '#8b5cf6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                onClick: (evt, elements) => {
+                    if(elements && elements.length > 0) {
+                        const idx = elements[0].index;
+                        applyChartFilter(idx === 0 ? 'Программы' : 'Игры');
+                    }
+                }
+            }
+        });
+
+        const ctxAnd = document.getElementById('androidChart').getContext('2d');
+        androidChart = new Chart(ctxAnd, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(androidVersions),
+                datasets: [{
+                    label: 'Количество пакетов',
+                    data: Object.values(androidVersions),
+                    backgroundColor: '#f59e0b'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    // Автоматический старт при открытии
+    loadData();
+</script>
+</body>
+</html>

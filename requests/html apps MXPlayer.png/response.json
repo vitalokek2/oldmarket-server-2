@@ -1,0 +1,25 @@
+{
+  "app": "com.oldmarketdark",
+  "code": 200,
+  "duration": "170ms",
+  "headers": {
+    "Server": "Werkzeug/3.1.6 Python/3.10.12",
+    "Date": "Sun, 10 May 2026 08:31:51 GMT",
+    "Content-Disposition": "inline; filename\u003dMXPlayer.png",
+    "Content-Type": "image/png",
+    "Content-Length": "15474",
+    "Last-Modified": "Fri, 06 Mar 2026 20:18:12 GMT",
+    "Cache-Control": "public, max-age\u003d86400",
+    "ETag": "\"1772828292.0-15474-3064335240\"",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+    "Connection": "close"
+  },
+  "message": "OK",
+  "protocol": "HTTP/1.1",
+  "remoteIp": "94.156.115.120",
+  "remotePort": 5000,
+  "sessionId": "522720a6-a5b4-42ff-89c9-90eaa96d7c0d",
+  "time": "2026-05-10 11:31:50"
+}

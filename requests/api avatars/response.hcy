@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Server: Werkzeug/3.1.6 Python/3.10.12
+Date: Sun, 10 May 2026 08:31:54 GMT
+Content-Type: application/json
+Content-Length: 262
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Headers: Content-Type,Authorization
+Access-Control-Allow-Methods: GET,PUT,POST,DELETE,OPTIONS
+Connection: close
+
+["avatar1.png","avatar2.png","avatar3.png","avatar4.png","avatar4.gif","avatar5.gif","avatar6.gif","avatar7.gif","avatar11.gif","avatar12.gif","avatar13.gif","avatar14.gif","avatar8.gif","avatar9.gif","avatar10.gif","avatar15.gif","avatar16.gif","avatar17.gif"]

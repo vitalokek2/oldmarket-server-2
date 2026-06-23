@@ -1,0 +1,17 @@
+{
+  "app": "com.oldmarketdark",
+  "duration": "428ms",
+  "headers": {
+    "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-J120F Build/LMY47X)",
+    "Host": "94.156.115.120:5000",
+    "Connection": "Keep-Alive",
+    "Accept-Encoding": "gzip"
+  },
+  "method": "GET",
+  "protocol": "HTTP/1.1",
+  "remoteIp": "94.156.115.120",
+  "remotePort": 5000,
+  "sessionId": "d4b3f821-c0c1-41e1-a473-0c79786517c0",
+  "time": "2026-05-10 11:30:31",
+  "url": "http://94.156.115.120:5000/api/top-games"
+}

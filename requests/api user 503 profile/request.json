@@ -1,0 +1,17 @@
+{
+  "app": "com.oldmarketdark",
+  "duration": "162ms",
+  "headers": {
+    "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-J120F Build/LMY47X)",
+    "Host": "94.156.115.120:5000",
+    "Connection": "Keep-Alive",
+    "Accept-Encoding": "gzip"
+  },
+  "method": "GET",
+  "protocol": "HTTP/1.1",
+  "remoteIp": "94.156.115.120",
+  "remotePort": 5000,
+  "sessionId": "745e4332-7289-4b9c-8a7d-6a341e70f075",
+  "time": "2026-05-10 11:31:53",
+  "url": "http://94.156.115.120:5000/api/user/503/profile"
+}
