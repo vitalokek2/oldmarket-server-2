@@ -11,8 +11,6 @@ import zipfile
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from xml.etree import ElementTree as ET
-
 from fastapi import APIRouter, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 
@@ -111,65 +109,101 @@ def _save_upload(file: UploadFile, dest_dir: Path, prefix: str = "") -> str:
 def _parse_apk_manifest(apk_path: Path) -> dict:
     result = {"package": "", "version_name": "", "version_code": "", "min_sdk": "", "app_name": ""}
     try:
+        # --- 1. Парсим AndroidManifest.xml ---
+        manifest_raw = None
         with zipfile.ZipFile(apk_path, 'r') as z:
             if 'AndroidManifest.xml' in z.namelist():
-                with z.open('AndroidManifest.xml') as mf:
-                    try:
-                        tree = ET.parse(mf)
-                        root = tree.getroot()
-                        ns = {'android': 'http://schemas.android.com/apk/res/android'}
-                        result["package"] = root.get('package', '')
-                        result["version_name"] = root.get('{http://schemas.android.com/apk/res/android}versionName', '')
-                        result["version_code"] = root.get('{http://schemas.android.com/apk/res/android}versionCode', '')
-                        uses_sdk = root.find('uses-sdk', ns)
-                        if uses_sdk is not None:
-                            result["min_sdk"] = uses_sdk.get('{http://schemas.android.com/apk/res/android}minSdkVersion', '')
-                        app = root.find('application', ns)
-                        if app is not None:
-                            result["app_name"] = app.get('{http://schemas.android.com/apk/res/android}label', '')
-                    except ET.ParseError:
-                        pass
+                manifest_raw = z.read('AndroidManifest.xml')
 
+        if manifest_raw:
+            # 1a. Пробуем aapt (самый надёжный)
+            try:
+                aapt_out = subprocess.run(
+                    ['aapt', 'dump', 'badging', str(apk_path)],
+                    capture_output=True, text=True, timeout=30
+                )
+                for line in aapt_out.stdout.split('\n'):
+                    if line.startswith('package:'):
+                        for part in line.split(' '):
+                            if part.startswith('name='):
+                                result["package"] = part.split('=')[1].strip("'\"")
+                            elif part.startswith('versionCode='):
+                                result["version_code"] = part.split('=')[1].strip("'\"")
+                            elif part.startswith('versionName='):
+                                result["version_name"] = part.split('=')[1].strip("'\"")
+                    elif line.startswith('uses-sdk:'):
+                        if 'minSdkVersion=' in line:
+                            result["min_sdk"] = line.split("minSdkVersion=")[1].split()[0].strip("'\"")
+                    elif line.startswith('application-label:'):
+                        result["app_name"] = line.split(':', 1)[1].strip().strip("'\"")
+            except FileNotFoundError:
+                pass
+            except subprocess.TimeoutExpired:
+                print("aapt timed out")
+
+            # 1b. Если aapt не дал package — парсим AXML вручную
             if not result["package"]:
                 try:
-                    aapt_out = subprocess.run(
-                        ['aapt', 'dump', 'badging', str(apk_path)],
-                        capture_output=True, text=True, timeout=10
-                    )
-                    for line in aapt_out.stdout.split('\n'):
-                        if line.startswith('package:'):
-                            parts = line.split(' ')
-                            for part in parts:
-                                if part.startswith('name='):
-                                    result["package"] = part.split('=')[1].strip("'\"")
-                                elif part.startswith('versionCode='):
-                                    result["version_code"] = part.split('=')[1].strip("'\"")
-                                elif part.startswith('versionName='):
-                                    result["version_name"] = part.split('=')[1].strip("'\"")
-                        elif line.startswith('uses-sdk:'):
-                            if 'minSdkVersion=' in line:
-                                result["min_sdk"] = line.split("minSdkVersion=")[1].split()[0].strip("'\"")
-                        elif line.startswith('application-label:'):
-                            result["app_name"] = line.split(':', 1)[1].strip().strip("'\"")
-                except (FileNotFoundError, subprocess.TimeoutExpired):
-                    pass
+                    from routers.axml_parser import parse_axml
+                    parsed = parse_axml(manifest_raw)
+                    for k in ("package", "version_code", "version_name", "min_sdk", "app_name"):
+                        if not result[k]:
+                            result[k] = parsed.get(k, "")
+                except Exception as e:
+                    print(f"AXML fallback error: {e}")
 
-            icon_paths = [
-                'res/mipmap-xxxhdpi-v4/ic_launcher.png',
-                'res/mipmap-xxhdpi-v4/ic_launcher.png',
-                'res/mipmap-xhdpi-v4/ic_launcher.png',
-                'res/mipmap-hdpi-v4/ic_launcher.png',
-                'res/mipmap-mdpi-v4/ic_launcher.png',
-            ]
+        # --- 2. Ищем иконку ---
+        icon_paths = [
+            # mipmap (Android 4.0+, API 14+)
+            'res/mipmap-xxxhdpi-v4/ic_launcher.png',
+            'res/mipmap-xxhdpi-v4/ic_launcher.png',
+            'res/mipmap-xhdpi-v4/ic_launcher.png',
+            'res/mipmap-hdpi-v4/ic_launcher.png',
+            'res/mipmap-mdpi-v4/ic_launcher.png',
+            # drawable (Android 1.0+, API 1+)
+            'res/drawable-xxxhdpi-v4/ic_launcher.png',
+            'res/drawable-xxhdpi-v4/ic_launcher.png',
+            'res/drawable-xhdpi-v4/ic_launcher.png',
+            'res/drawable-hdpi-v4/ic_launcher.png',
+            'res/drawable-mdpi-v4/ic_launcher.png',
+            'res/drawable-ldpi-v4/ic_launcher.png',
+            'res/drawable-hdpi/ic_launcher.png',
+            'res/drawable-mdpi/ic_launcher.png',
+            'res/drawable-ldpi/ic_launcher.png',
+            'res/drawable/ic_launcher.png',
+        ]
+        with zipfile.ZipFile(apk_path, 'r') as z:
+            names = z.namelist()
             for ip in icon_paths:
-                if ip in z.namelist():
+                if ip in names:
                     result["icon_path"] = ip
                     break
+
             if not result.get("icon_path"):
-                for name in z.namelist():
+                # Fallback: любой ic_launcher PNG
+                for name in names:
                     if 'ic_launcher' in name and name.endswith('.png'):
                         result["icon_path"] = name
                         break
+
+            if not result.get("icon_path"):
+                # Fallback: любой ic_launcher XML (векторная иконка 5.0+)
+                for name in names:
+                    if 'ic_launcher' in name and name.endswith('.xml'):
+                        result["icon_path"] = name
+                        break
+
+            if not result.get("icon_path"):
+                # Fallback: первый PNG из mipmap/drawable
+                for name in names:
+                    if name.startswith('res/mipmap') and name.endswith('.png'):
+                        result["icon_path"] = name
+                        break
+                if not result.get("icon_path"):
+                    for name in names:
+                        if name.startswith('res/drawable') and name.endswith('.png'):
+                            result["icon_path"] = name
+                            break
     except Exception as e:
         print(f"APK parse error: {e}")
     return result

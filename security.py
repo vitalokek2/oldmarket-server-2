@@ -49,6 +49,35 @@ async def ensure_security_tables():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
+    await execute_query("""
+    CREATE TABLE IF NOT EXISTS review_reactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        review_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        value INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        UNIQUE(review_id, user_id)
+    )
+    """)
+    await execute_query("""
+    CREATE TABLE IF NOT EXISTS review_comments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        review_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        text TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """)
+    await execute_query("""
+    CREATE TABLE IF NOT EXISTS review_reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        review_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        reason TEXT,
+        status TEXT DEFAULT 'new',
+        created_at TEXT NOT NULL
+    )
+    """)
 
 def get_real_ip(request) -> str:
     xff = request.headers.get("x-forwarded-for")

@@ -30,15 +30,38 @@ for route, path in static_dirs.items():
     if os.path.exists(path):
         app.mount(route, StaticFiles(directory=path), name=route.strip("/"))
 
-# Отдаём index.html на корень
-@app.get("/", include_in_schema=False)
-async def root():
-    index_path = os.path.join(BASE_DIR, "site", "index.html")
-    if os.path.exists(index_path):
-        with open(index_path, "r", encoding="utf-8") as f:
+def _serve_html(name: str):
+    path = os.path.join(BASE_DIR, "site", name)
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
             from fastapi.responses import HTMLResponse
             return HTMLResponse(content=f.read())
-    return {"message": "AltMart API"}
+    return {"message": f"{name} not found"}
+
+
+@app.get("/", include_in_schema=False)
+async def root():
+    return _serve_html("index.html")
+
+@app.get("/login.html", include_in_schema=False)
+async def login_page():
+    return _serve_html("login.html")
+
+@app.get("/register.html", include_in_schema=False)
+async def register_page():
+    return _serve_html("login.html")
+
+@app.get("/profile.html", include_in_schema=False)
+async def profile_page():
+    return _serve_html("profile.html")
+
+@app.get("/submit.html", include_in_schema=False)
+async def submit_page():
+    return _serve_html("submit.html")
+
+@app.get("/app.html", include_in_schema=False)
+async def app_page():
+    return _serve_html("app.html")
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():

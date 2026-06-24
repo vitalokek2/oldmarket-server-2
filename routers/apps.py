@@ -10,9 +10,6 @@ from security import get_real_ip, record_download_once
 router = APIRouter(prefix="/api")
 APKS_DIR = os.path.join(BASE_DIR, "downloaded", "apks")
 
-# ============================================================
-# ПРОДВИНУТЫЙ ПОИСК
-# ============================================================
 
 def _search_score(app: dict, query: str) -> int:
     q = query.lower()
@@ -32,8 +29,39 @@ def _search_score(app: dict, query: str) -> int:
     return 0
 
 
+async def _enrich_app(app_data: dict) -> dict:
+    """Добавляет живые rating/downloads/review_count из БД."""
+    app_id = app_data.get("id")
+    if not app_id:
+        return app_data
+
+    row = await fetch_one(
+        "SELECT AVG(rating) as avg_r, COUNT(*) as cnt FROM reviews WHERE app_id = ?",
+        (app_id,),
+    )
+    avg_rating = round(float(row["avg_r"]), 1) if row and row["avg_r"] else 0.0
+    review_count = row["cnt"] if row else 0
+
+    drow = await fetch_one(
+        "SELECT COUNT(*) as cnt FROM download_ip WHERE app_id = ?", (app_id,)
+    )
+    downloads = drow["cnt"] if drow else 0
+
+    return {
+        **app_data,
+        "rating": avg_rating,
+        "review_count": review_count,
+        "downloads": downloads,
+    }
+
+
 @router.get("/apps")
-async def get_apps(is_game: int = Query(None), category: str = Query(None)):
+async def get_apps(
+    is_game: int = Query(None),
+    category: str = Query(None),
+    limit: int = Query(200),
+    offset: int = Query(0),
+):
     query = "SELECT data FROM apps WHERE 1=1"
     params = []
     if is_game is not None:
@@ -42,8 +70,10 @@ async def get_apps(is_game: int = Query(None), category: str = Query(None)):
     if category is not None:
         query += " AND category_code = ?"
         params.append(category)
+    query += " ORDER BY CAST(json_extract(data, '$.downloads') AS INTEGER) DESC LIMIT ? OFFSET ?"
+    params.extend([limit, offset])
     rows = await fetch_all(query, tuple(params))
-    return [json.loads(row["data"]) for row in rows]
+    return [await _enrich_app(json.loads(row["data"])) for row in rows]
 
 
 @router.get("/apps/search")
@@ -74,12 +104,21 @@ async def search_apps(
             scored.append((score, app))
 
     scored.sort(key=lambda x: (-x[0], -x[1].get("downloads", 0), x[1].get("name", "").lower()))
-    results = [app for _, app in scored[offset:offset + limit]]
+    results = [await _enrich_app(app) for _, app in scored[offset:offset + limit]]
     return results
 
 
+@router.get("/apps/top")
+async def get_top_apps(limit: int = Query(50)):
+    rows = await fetch_all(
+        "SELECT data FROM apps ORDER BY CAST(json_extract(data, '$.downloads') AS INTEGER) DESC LIMIT ?",
+        (limit,),
+    )
+    return [await _enrich_app(json.loads(row["data"])) for row in rows]
+
+
 @router.get("/top-apps")
-async def get_top_apps():
+async def get_top_apps_legacy():
     rows = await fetch_all(
         "SELECT data FROM apps WHERE is_game = 0 "
         "ORDER BY CAST(json_extract(data, '$.downloads') AS INTEGER) DESC LIMIT 50"
@@ -101,7 +140,7 @@ async def get_app_detail(app_id: int):
     row = await fetch_one("SELECT data FROM apps WHERE id = ?", (app_id,))
     if not row:
         raise HTTPException(status_code=404)
-    return json.loads(row["data"])
+    return await _enrich_app(json.loads(row["data"]))
 
 
 @router.get("/app/{app_id}/screenshots")
@@ -111,10 +150,6 @@ async def get_screenshots(app_id: int):
         return json.loads(row["data"]).get("screenshots", [])
     return []
 
-
-# ============================================================
-# СКАЧИВАНИЕ — последняя и конкретная версия
-# ============================================================
 
 @router.get("/download/{app_id}")
 async def download_apk_latest(app_id: int, request: Request):

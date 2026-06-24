@@ -4,16 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AltMart</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/site/style.css">
 </head>
 <body>
   <header class="topnav">
-    <a href="/" class="back-link">←</a>
-    <a href="/" class="logo">
-      <span class="logo-mark">A</span>
-      AltMart
-    </a>
-    <span></span>
+    <div class="topnav-inner">
+      <a href="/" class="back-link">←</a>
+      <a href="/" class="logo">
+        <span class="logo-mark">A</span>
+        AltMart
+      </a>
+      <span class="nav-links"></span>
+    </div>
   </header>
 
   <div id="appContent">
@@ -23,138 +25,177 @@
   <div class="footer">AltMart — неофициальный форк в память об OldMarket</div>
 
   <script>
-    const params = new URLSearchParams(location.search);
-    const appId = params.get('id');
-    const content = document.getElementById('appContent');
+    function getQueryParam(name) {
+      var s = window.location.search.substring(1).split('&');
+      for (var i = 0; i < s.length; i++) {
+        var p = s[i].split('=');
+        if (p[0] === name) return decodeURIComponent(p[1] || '');
+      }
+      return null;
+    }
+
+    var appId = getQueryParam('id');
+    var content = document.getElementById('appContent');
 
     function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str || '';
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str || ''));
       return div.innerHTML;
     }
 
     function starsHtml(rating) {
       if (!rating) return '<span class="stars">Нет оценок</span>';
-      const full = Math.round(rating);
-      return `<span class="stars">${'★'.repeat(full)}${'☆'.repeat(5 - full)} ${rating.toFixed(1)}</span>`;
+      var full = Math.round(rating);
+      var s = '';
+      for (var i = 0; i < full; i++) s += '*';
+      for (var i = full; i < 5; i++) s += '.';
+      return '<span class="stars">' + s + ' ' + rating.toFixed(1) + '</span>';
     }
 
-    async function loadApp() {
+    function ajaxGet(url, onSuccess, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try { onSuccess(JSON.parse(xhr.responseText)); }
+            catch (e) { if (onError) onError(); }
+          } else {
+            if (onError) onError();
+          }
+        }
+      };
+      xhr.send();
+    }
+
+    function ajaxPost(url, body, onSuccess, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try { onSuccess(JSON.parse(xhr.responseText)); }
+            catch (e) { if (onError) onError(); }
+          } else {
+            if (onError) onError();
+          }
+        }
+      };
+      xhr.send(JSON.stringify(body));
+    }
+
+    function loadApp() {
       if (!appId) {
         content.innerHTML = '<div class="empty-state">Приложение не указано</div>';
         return;
       }
-      try {
-        const res = await fetch(`/api/app/${appId}`);
-        if (!res.ok) throw new Error('not found');
-        const app = await res.json();
+      ajaxGet('/api/app/' + appId, function(app) {
         render(app);
         loadReviews();
-      } catch (e) {
+      }, function() {
         content.innerHTML = '<div class="empty-state">Приложение не найдено</div>';
-      }
+      });
     }
 
     function render(app) {
-      const icon = app.icon ? `/html/apps/${app.icon}` : '/default-icon.svg';
-      const screenshots = (app.screenshots || []).map(s =>
-        `<img src="/html/screenshots/${s}" alt="screenshot">`
-      ).join('');
+      var icon = app.icon ? '/html/apps/' + app.icon : '/site/default-icon.svg';
 
-      content.innerHTML = `
-        <div class="app-header">
-          <img class="icon" src="${icon}" onerror="this.src='/default-icon.svg'">
-          <div class="info">
-            <div class="name">${escapeHtml(app.name)}</div>
-            <div class="author">${escapeHtml(app.author || '')}</div>
-          </div>
-          <a class="install-btn" href="/api/download/${app.id}">Установить</a>
-        </div>
-        <div class="stat-row">
-          <div><strong>${app.downloads || 0}</strong>загрузок</div>
-          <div><strong>${app.version || '—'}</strong>версия</div>
-          <div><strong>${app.api ? 'Android ' + app.api + '+' : '—'}</strong>требования</div>
-          <div>${starsHtml(app.rating)}</div>
-        </div>
-        ${screenshots ? `<div class="screenshots">${screenshots}</div>` : ''}
-        <div class="description">
-          <h3>Описание</h3>
-          <p>${escapeHtml(app.description || 'Описание отсутствует.')}</p>
-        </div>
-        <div class="reviews" id="reviewsBlock">
-          <h3>Отзывы (${app.review_count || 0})</h3>
-          <div id="reviewsList"><div class="empty-state">Загрузка отзывов...</div></div>
-          <form class="review-form" id="reviewForm">
-            <select name="rating" required>
-              <option value="">Оценка</option>
-              <option value="5">★★★★★</option>
-              <option value="4">★★★★</option>
-              <option value="3">★★★</option>
-              <option value="2">★★</option>
-              <option value="1">★</option>
-            </select>
-            <textarea name="comment" placeholder="Ваш отзыв" rows="3" required></textarea>
-            <button type="submit">Оставить отзыв</button>
-          </form>
-        </div>
-      `;
+      var screenshotsHtml = '';
+      if (app.screenshots && app.screenshots.length) {
+        screenshotsHtml = '<div class="screenshots">';
+        for (var i = 0; i < app.screenshots.length; i++) {
+          screenshotsHtml += '<img src="/html/screenshots/' + app.screenshots[i] + '" alt="">';
+        }
+        screenshotsHtml += '</div>';
+      }
 
-      document.getElementById('reviewForm').addEventListener('submit', submitReview);
+      var downloads = app.downloads || 0;
+      var version = app.version || '--';
+      var api = app.api ? 'Android ' + app.api + '+' : '--';
+
+      content.innerHTML = ''
+        + '<div class="app-header">'
+        + '<span class="icon-cell"><img class="icon" src="' + icon + '" onerror="this.src=\'/site/default-icon.svg\'"></span>'
+        + '<span class="info-cell">'
+        + '<div class="name">' + escapeHtml(app.name) + '</div>'
+        + '<div class="author">' + escapeHtml(app.author || '') + '</div>'
+        + '</span>'
+        + '<span class="btn-cell"><a class="install-btn" href="/api/download/' + app.id + '">Установить</a></span>'
+        + '</div>'
+        + '<div class="stat-row"><table><tr>'
+        + '<td><strong>' + downloads + '</strong>загрузок</td>'
+        + '<td><strong>' + version + '</strong>версия</td>'
+        + '<td><strong>' + api + '</strong>требования</td>'
+        + '<td>' + starsHtml(app.rating) + '</td>'
+        + '</tr></table></div>'
+        + screenshotsHtml
+        + '<div class="description">'
+        + '<h3>Описание</h3>'
+        + '<p>' + escapeHtml(app.description || 'Описание отсутствует.') + '</p>'
+        + '</div>'
+        + '<div class="reviews" id="reviewsBlock">'
+        + '<h3>Отзывы (' + (app.review_count || 0) + ')</h3>'
+        + '<div id="reviewsList"><div class="empty-state">Загрузка отзывов...</div></div>'
+        + '<form class="review-form" id="reviewForm" onsubmit="return submitReview(this)">'
+        + '<label>Оценка<br><select name="rating" required>'
+        + '<option value="">--</option>'
+        + '<option value="5">5 (отлично)</option>'
+        + '<option value="4">4 (хорошо)</option>'
+        + '<option value="3">3 (нормально)</option>'
+        + '<option value="2">2 (плохо)</option>'
+        + '<option value="1">1 (ужасно)</option>'
+        + '</select></label>'
+        + '<label>Отзыв<br><textarea name="comment" placeholder="Ваш отзыв" rows="3" required></textarea></label>'
+        + '<button type="submit">Оставить отзыв</button>'
+        + '</form>'
+        + '</div>';
+
+      loadApp();
     }
 
-    async function loadReviews() {
-      try {
-        const res = await fetch(`/api/app/${appId}/reviews`);
-        const reviews = await res.json();
-        const list = document.getElementById('reviewsList');
+    function loadReviews() {
+      ajaxGet('/api/app/' + appId + '/reviews', function(reviews) {
+        var list = document.getElementById('reviewsList');
         if (!reviews.length) {
           list.innerHTML = '<div class="empty-state">Отзывов пока нет</div>';
           return;
         }
-        list.innerHTML = reviews.map(r => `
-          <div class="review">
-            <div class="review-user">${escapeHtml(r.username)} — ${'★'.repeat(r.rating)}</div>
-            <div class="review-text">${escapeHtml(r.comment)}</div>
-          </div>
-        `).join('');
-      } catch (e) {
+        var html = '';
+        for (var i = 0; i < reviews.length; i++) {
+          var r = reviews[i];
+          var stars = '';
+          for (var s = 0; s < (r.rating || 0); s++) stars += '*';
+          html += '<div class="review">'
+            + '<div class="review-user">' + escapeHtml(r.username) + ' - ' + stars + '</div>'
+            + '<div class="review-text">' + escapeHtml(r.comment) + '</div>'
+            + '</div>';
+        }
+        list.innerHTML = html;
+      }, function() {
         document.getElementById('reviewsList').innerHTML = '<div class="empty-state">Не удалось загрузить отзывы</div>';
-      }
+      });
     }
 
-    async function submitReview(e) {
-      e.preventDefault();
-      const form = e.target;
-
-      let me;
-      try {
-        const meRes = await fetch('/api/me');
-        if (!meRes.ok) throw new Error('not logged in');
-        me = await meRes.json();
-      } catch (err) {
-        alert('Войдите в аккаунт, чтобы оставить отзыв');
-        location.href = '/login.html';
-        return;
-      }
-
-      const rating = parseInt(form.rating.value, 10);
-      const comment = form.comment.value.trim();
-      try {
-        const res = await fetch(`/api/app/${appId}/review`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: me.id, rating, comment })
+    function submitReview(form) {
+      ajaxGet('/api/me', function(me) {
+        var rating = parseInt(form.rating.value, 10);
+        var comment = form.comment.value;
+        ajaxPost('/api/app/' + appId + '/review', { user_id: me.id, rating: rating, comment: comment }, function(data) {
+          if (data.success) {
+            form.reset();
+            loadReviews();
+          } else {
+            alert(data.message || 'Ошибка');
+          }
+        }, function() {
+          alert('Ошибка сети');
         });
-        const data = await res.json();
-        if (data.success) {
-          form.reset();
-          loadReviews();
-        } else {
-          alert(data.message || 'Ошибка при отправке отзыва');
-        }
-      } catch (err) {
-        alert('Ошибка сети');
-      }
+      }, function() {
+        alert('Войдите в аккаунт, чтобы оставить отзыв');
+        window.location.href = '/login.html';
+      });
+      return false;
     }
 
     loadApp();

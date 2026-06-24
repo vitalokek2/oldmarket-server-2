@@ -1,99 +1,79 @@
-/* AltMart — стиль в духе старого Android Market (Web 2.0) */
-
-:root {
-  --accent: #94ab3a;
-  --accent-dark: #7a8e30;
-  --accent-light: #b3c95c;
-  --card-bg: #2b2b2b;
-  --card-text: #e6e6e6;
-  --star: #f5c400;
-}
-
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #1c1c1c;
-  background-image:
-    linear-gradient(135deg, rgba(255,255,255,0.03) 25%, transparent 25%),
-    linear-gradient(315deg, rgba(255,255,255,0.03) 25%, transparent 25%);
   background-size: 12px 12px;
   color: #222;
 }
 
 a { color: inherit; }
 
-/* --- Шапка --- */
 .topnav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--accent);
-  background-image: linear-gradient(180deg, var(--accent-light), var(--accent));
+  background: #94ab3a;
   padding: 10px 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   position: sticky;
   top: 0;
   z-index: 10;
+  width: 100%;
+  display: table;
 }
-
+.topnav-inner {
+  display: table-row;
+}
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: table-cell;
+  vertical-align: middle;
   font-size: 22px;
   font-weight: bold;
   color: #fff;
   text-decoration: none;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+  white-space: nowrap;
 }
-
 .logo-mark {
+  display: inline-block;
   width: 30px;
   height: 30px;
   border-radius: 6px;
   background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  line-height: 30px;
   font-size: 16px;
-  color: var(--accent-dark);
+  color: #7a8e30;
+  margin-right: 8px;
+  vertical-align: middle;
 }
-
 .nav-links {
-  display: flex;
-  gap: 18px;
-  align-items: center;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: right;
+  white-space: nowrap;
 }
-
 .nav-links a {
   color: #fff;
   text-decoration: none;
   font-size: 14px;
   font-weight: bold;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  margin-left: 18px;
 }
-
 .nav-links a:hover { text-decoration: underline; }
-
 .user-pill {
+  display: inline-block;
   background: rgba(0,0,0,0.2);
   border-radius: 14px;
   padding: 4px 12px;
   font-size: 13px;
   color: #fff;
+  margin-left: 18px;
 }
 
-/* --- Поиск --- */
 .search-bar {
   background: #f1f1e8;
-  border-bottom: 3px solid var(--accent-dark);
+  border-bottom: 3px solid #7a8e30;
   padding: 10px 16px;
-  display: flex;
-  justify-content: center;
+  text-align: center;
 }
-
 .search-bar input {
   width: 100%;
   max-width: 600px;
@@ -101,39 +81,32 @@ a { color: inherit; }
   padding: 8px 14px;
   border: 1px solid #999;
   border-radius: 18px;
-  outline: none;
 }
+.search-bar input:focus { border-color: #94ab3a; }
 
-.search-bar input:focus { border-color: var(--accent); }
-
-/* --- Категории --- */
 .category-bar {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
   padding: 10px 16px;
   background: #e9e9de;
   border-bottom: 1px solid #ccc;
+  white-space: nowrap;
+  overflow-x: auto;
 }
-
 .category-chip {
-  flex-shrink: 0;
+  display: inline-block;
   padding: 6px 14px;
   border-radius: 14px;
   background: #fff;
   border: 1px solid #bbb;
   font-size: 13px;
   cursor: pointer;
-  white-space: nowrap;
+  margin-right: 8px;
 }
-
 .category-chip.active {
-  background: var(--accent);
+  background: #94ab3a;
   color: #fff;
-  border-color: var(--accent-dark);
+  border-color: #7a8e30;
 }
 
-/* --- Сетка приложений --- */
 main {
   max-width: 1000px;
   margin: 0 auto;
@@ -150,44 +123,49 @@ main {
 }
 
 .app-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  width: 100%;
 }
-
+.app-grid table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.app-grid td {
+  padding: 4px;
+  width: 50%;
+  vertical-align: top;
+}
 @media (min-width: 640px) {
-  .app-grid { grid-template-columns: repeat(3, 1fr); }
+  .app-grid td { width: 33.33%; }
 }
 
 .app-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--card-bg);
-  background-image: linear-gradient(180deg, #333, #232323);
+  display: block;
+  background: #2b2b2b;
   border: 1px solid #111;
   border-radius: 4px;
   padding: 8px;
   cursor: pointer;
   text-decoration: none;
-  color: var(--card-text);
+  color: #e6e6e6;
   min-width: 0;
+  overflow: hidden;
 }
-
 .app-card:hover { background: #3a3a3a; }
 
+.app-icon-wrap {
+  float: left;
+  margin-right: 10px;
+}
 .app-card img.icon {
   width: 48px;
   height: 48px;
   border-radius: 6px;
-  flex-shrink: 0;
   background: #444;
-  object-fit: cover;
 }
-
-.app-card .app-meta { min-width: 0; }
-
-.app-card .app-title {
+.app-meta {
+  overflow: hidden;
+}
+.app-title {
   font-weight: bold;
   font-size: 14px;
   display: block;
@@ -195,14 +173,12 @@ main {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.app-card .app-sub {
+.app-sub {
   font-size: 12px;
   color: #aaa;
   display: block;
 }
-
-.stars { color: var(--star); font-size: 12px; }
+.stars { color: #f5c400; font-size: 12px; }
 
 .empty-state {
   text-align: center;
@@ -211,45 +187,53 @@ main {
   font-size: 14px;
 }
 
-/* --- Кнопка "Загрузить приложение" --- */
 .submit-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--accent);
-  background-image: linear-gradient(180deg, var(--accent-light), var(--accent));
+  display: block;
+  background: #94ab3a;
   border-radius: 4px;
   color: #fff;
   font-weight: bold;
   text-decoration: none;
   font-size: 14px;
   padding: 8px;
+  text-align: center;
 }
 
-/* --- Страница приложения --- */
 .app-header {
-  background: var(--card-bg);
-  background-image: linear-gradient(180deg, #3a3a3a, #232323);
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  background: #2b2b2b;
   padding: 20px 16px;
   color: #fff;
+  overflow: hidden;
+  width: 100%;
+  display: table;
 }
-
+.app-header .icon-cell {
+  display: table-cell;
+  width: 72px;
+  vertical-align: middle;
+  padding-right: 16px;
+}
 .app-header img.icon {
   width: 72px;
   height: 72px;
   border-radius: 10px;
   background: #444;
-  object-fit: cover;
+}
+.app-header .info-cell {
+  display: table-cell;
+  vertical-align: middle;
+}
+.app-header .info-cell .name { font-size: 22px; font-weight: bold; }
+.app-header .info-cell .author { color: #aaa; font-size: 14px; }
+.app-header .btn-cell {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: right;
+  white-space: nowrap;
 }
 
-.app-header .info { flex: 1; min-width: 0; }
-.app-header .info .name { font-size: 22px; font-weight: bold; }
-.app-header .info .author { color: #aaa; font-size: 14px; }
-
 .install-btn {
+  display: inline-block;
   background: #54c8d5;
   color: #fff;
   border: none;
@@ -259,37 +243,32 @@ main {
   border-radius: 4px;
   cursor: pointer;
   text-decoration: none;
-  white-space: nowrap;
 }
-
 .install-btn:hover { background: #3fb3c1; }
 
 .stat-row {
-  display: flex;
-  gap: 24px;
   background: #f1f1e8;
   padding: 12px 16px;
   font-size: 13px;
   color: #555;
   border-bottom: 1px solid #ccc;
-  flex-wrap: wrap;
 }
-
+.stat-row table { width: 100%; }
+.stat-row td { vertical-align: top; padding-right: 24px; }
 .stat-row strong { display: block; color: #222; font-size: 15px; }
 
 .screenshots {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
   padding: 16px;
   background: #ddd;
+  white-space: nowrap;
+  overflow-x: auto;
 }
-
 .screenshots img {
   height: 320px;
   border-radius: 6px;
   border: 6px solid #ccc;
-  flex-shrink: 0;
+  margin-right: 12px;
+  vertical-align: middle;
 }
 
 .description, .reviews {
@@ -297,7 +276,6 @@ main {
   padding: 16px;
   margin-top: 1px;
 }
-
 .description h3, .reviews h3 {
   margin-top: 0;
   font-size: 15px;
@@ -308,27 +286,20 @@ main {
   border-bottom: 1px solid #eee;
   padding: 10px 0;
 }
-
 .review .review-user { font-weight: bold; font-size: 13px; }
 .review .review-text { font-size: 13px; color: #333; }
 
-.review-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-}
-
+.review-form label { display: block; font-size: 13px; font-weight: bold; color: #444; margin-bottom: 6px; }
 .review-form select, .review-form textarea, .review-form input {
+  width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
+  margin-bottom: 8px;
 }
-
 .review-form button {
-  align-self: flex-start;
-  background: var(--accent);
+  background: #94ab3a;
   color: #fff;
   border: none;
   padding: 8px 18px;

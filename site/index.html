@@ -4,18 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AltMart</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/site/style.css">
 </head>
 <body>
   <header class="topnav">
-    <a href="/" class="logo">
-      <span class="logo-mark">A</span>
-      AltMart
-    </a>
-    <nav class="nav-links" id="navLinks">
-      <a href="/submit">Загрузить приложение</a>
-      <span id="userArea"></span>
-    </nav>
+    <div class="topnav-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark">A</span>
+        AltMart
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="/submit">Загрузить приложение</a>
+        <span id="userArea"></span>
+      </nav>
+    </div>
   </header>
 
   <div class="search-bar">
@@ -23,9 +25,9 @@
   </div>
 
   <div class="category-bar" id="categoryBar">
-    <div class="category-chip active" data-cat="">Все</div>
-    <div class="category-chip" data-game="0">Приложения</div>
-    <div class="category-chip" data-game="1">Игры</div>
+    <span class="category-chip active" data-cat="">Все</span>
+    <span class="category-chip" data-game="0">Приложения</span>
+    <span class="category-chip" data-game="1">Игры</span>
   </div>
 
   <main>
@@ -38,100 +40,123 @@
   <div class="footer">AltMart — неофициальный форк в память об OldMarket</div>
 
   <script>
-    const grid = document.getElementById('appGrid');
-    const sectionTitle = document.getElementById('sectionTitle');
-    const searchInput = document.getElementById('searchInput');
-    const categoryBar = document.getElementById('categoryBar');
+    var grid = document.getElementById('appGrid');
+    var sectionTitle = document.getElementById('sectionTitle');
+    var searchInput = document.getElementById('searchInput');
+    var categoryBar = document.getElementById('categoryBar');
 
-    let currentGameFilter = null; // null = все, "0" = приложения, "1" = игры
-    let searchTimer = null;
+    var currentGameFilter = null;
+    var searchTimer = null;
 
     function renderApps(apps) {
       if (!apps.length) {
         grid.innerHTML = '<div class="empty-state">Ничего не найдено</div>';
         return;
       }
-      grid.innerHTML = apps.map(appCardHtml).join('');
+      var html = '<table><tr>';
+      for (var i = 0; i < apps.length; i++) {
+        if (i > 0 && i % 2 === 0) html += '</tr><tr>';
+        html += '<td>' + appCardHtml(apps[i]) + '</td>';
+      }
+      html += '</tr></table>';
+      grid.innerHTML = html;
     }
 
     function appCardHtml(app) {
-      const icon = app.icon ? `/html/apps/${app.icon}` : '/default-icon.svg';
-      const rating = app.rating ? `<span class="stars">★ ${app.rating.toFixed(1)}</span>` : '';
-      return `
-        <a class="app-card" href="/app.html?id=${app.id}">
-          <img class="icon" src="${icon}" alt="" loading="lazy" onerror="this.src='/default-icon.svg'">
-          <div class="app-meta">
-            <span class="app-title">${escapeHtml(app.name || 'Без названия')}</span>
-            <span class="app-sub">${escapeHtml(app.category_label || '')}</span>
-            ${rating}
-          </div>
-        </a>`;
+      var icon = app.icon ? '/html/apps/' + app.icon : '/site/default-icon.svg';
+      var rating = app.rating ? '<span class="stars">* ' + app.rating.toFixed(1) + '</span>' : '';
+      return '<a class="app-card" href="/app.html?id=' + app.id + '">'
+        + '<span class="app-icon-wrap"><img class="icon" src="' + icon + '" alt="" onerror="this.src=\'/site/default-icon.svg\'"></span>'
+        + '<div class="app-meta">'
+        + '<span class="app-title">' + escapeHtml(app.name || 'Без названия') + '</span>'
+        + '<span class="app-sub">' + escapeHtml(app.category_label || '') + '</span>'
+        + rating
+        + '</div></a>';
     }
 
     function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
       return div.innerHTML;
     }
 
-    async function loadApps() {
-      const params = new URLSearchParams();
-      if (currentGameFilter !== null) params.set('is_game', currentGameFilter);
+    function loadApps() {
+      var qs = '';
+      if (currentGameFilter !== null) qs = '?is_game=' + currentGameFilter;
       sectionTitle.textContent = currentGameFilter === '1' ? 'Игры' : currentGameFilter === '0' ? 'Приложения' : 'Каталог';
       grid.innerHTML = '<div class="empty-state">Загрузка...</div>';
-      try {
-        const res = await fetch('/api/apps?' + params.toString());
-        const apps = await res.json();
+      ajaxGet('/api/apps' + qs, function(apps) {
         renderApps(apps);
-      } catch (e) {
+      }, function() {
         grid.innerHTML = '<div class="empty-state">Не удалось загрузить каталог</div>';
-      }
+      });
     }
 
-    async function doSearch(q) {
+    function doSearch(q) {
       if (!q) { loadApps(); return; }
-      const params = new URLSearchParams({ q });
-      if (currentGameFilter !== null) params.set('is_game', currentGameFilter);
-      sectionTitle.textContent = `Результаты по запросу «${q}»`;
+      var qs = '?q=' + encodeURIComponent(q);
+      if (currentGameFilter !== null) qs += '&is_game=' + currentGameFilter;
+      sectionTitle.textContent = 'Результаты по запросу "' + q + '"';
       grid.innerHTML = '<div class="empty-state">Поиск...</div>';
-      try {
-        const res = await fetch('/api/apps/search?' + params.toString());
-        const apps = await res.json();
+      ajaxGet('/api/apps/search' + qs, function(apps) {
         renderApps(apps);
-      } catch (e) {
+      }, function() {
         grid.innerHTML = '<div class="empty-state">Ошибка поиска</div>';
-      }
+      });
     }
 
-    searchInput.addEventListener('input', () => {
-      clearTimeout(searchTimer);
-      const q = searchInput.value.trim();
-      searchTimer = setTimeout(() => doSearch(q), 250);
-    });
-
-    categoryBar.addEventListener('click', (e) => {
-      const chip = e.target.closest('.category-chip');
-      if (!chip) return;
-      [...categoryBar.children].forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      currentGameFilter = chip.dataset.game !== undefined ? chip.dataset.game : null;
-      const q = searchInput.value.trim();
-      q ? doSearch(q) : loadApps();
-    });
-
-    // Узнаём, залогинен ли пользователь, через серверный эндпоинт
-    // (кука HttpOnly, поэтому напрямую из JS её не прочитать — и не нужно).
-    async function renderUserArea() {
-      const userArea = document.getElementById('userArea');
-      try {
-        const res = await fetch('/api/me');
-        if (res.ok) {
-          const me = await res.json();
-          userArea.innerHTML = `<a href="/profile.html">${escapeHtml(me.username)}</a>`;
-          return;
+    function ajaxGet(url, onSuccess, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try { onSuccess(JSON.parse(xhr.responseText)); }
+            catch (e) { if (onError) onError(); }
+          } else {
+            if (onError) onError();
+          }
         }
-      } catch (e) { /* не залогинен — покажем ссылку входа */ }
-      userArea.innerHTML = '<a href="/login.html">Войти</a>';
+      };
+      xhr.send();
+    }
+
+    function onSearchInput() {
+      clearTimeout(searchTimer);
+      var q = searchInput.value;
+      searchTimer = setTimeout(function() { doSearch(q); }, 250);
+    }
+    if (searchInput.addEventListener) {
+      searchInput.addEventListener('input', onSearchInput);
+    } else {
+      searchInput.oninput = onSearchInput;
+    }
+
+    function onCategoryClick(e) {
+      var target = e.target || e.srcElement;
+      if (target.className.indexOf('category-chip') === -1) return;
+      var chips = categoryBar.getElementsByClassName ? categoryBar.getElementsByClassName('category-chip') : categoryBar.children;
+      for (var i = 0; i < chips.length; i++) {
+        chips[i].className = chips[i].className.replace(/\bactive\b/g, '');
+      }
+      target.className = target.className + ' active';
+      currentGameFilter = target.getAttribute('data-game') !== null ? target.getAttribute('data-game') : null;
+      var q = searchInput.value;
+      q ? doSearch(q) : loadApps();
+    }
+    if (categoryBar.addEventListener) {
+      categoryBar.addEventListener('click', onCategoryClick);
+    } else {
+      categoryBar.onclick = onCategoryClick;
+    }
+
+    function renderUserArea() {
+      var userArea = document.getElementById('userArea');
+      ajaxGet('/api/me', function(me) {
+        userArea.innerHTML = '<a href="/profile.html">' + escapeHtml(me.username) + '</a>';
+      }, function() {
+        userArea.innerHTML = '<a href="/login.html">Войти</a>';
+      });
     }
     renderUserArea();
 

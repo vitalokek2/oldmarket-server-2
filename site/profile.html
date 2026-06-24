@@ -3,249 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Профиль — <span class="market-name">AltMart</span></title>
-<link rel="stylesheet" href="/style.css">
+<title>Профиль — AltMart</title>
+<link rel="stylesheet" href="/site/style.css">
 <style>
-.profile-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-.profile-card {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 20px;
-  margin-top: 16px;
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--accent);
-}
-
-.profile-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
-  background: #444;
-  object-fit: cover;
-  border: 2px solid var(--accent);
-}
-
-.profile-info h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #333;
-}
-
-.profile-info .username {
-  font-size: 14px;
-  color: #666;
-}
-
-.profile-info .premium-badge {
-  display: inline-block;
-  background: linear-gradient(180deg, #ffd700, #ffa500);
-  color: #333;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 10px;
-  margin-top: 4px;
-}
-
-.profile-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stat-box {
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 12px;
-  text-align: center;
-}
-
-.stat-box .stat-value {
-  font-size: 20px;
-  font-weight: bold;
-  color: var(--accent-dark);
-}
-
-.stat-box .stat-label {
-  font-size: 11px;
-  color: #888;
-  margin-top: 4px;
-}
-
-.profile-section {
-  margin-bottom: 20px;
-}
-
-.profile-section h3 {
-  font-size: 14px;
-  color: #444;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.profile-section textarea {
-  width: 100%;
-  min-height: 80px;
-  padding: 10px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  font-size: 14px;
-  font-family: Arial, Helvetica, sans-serif;
-  resize: vertical;
-}
-
-.avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-}
-
-.avatar-grid img {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  background: #eee;
-  object-fit: cover;
-}
-
-.avatar-grid img:hover {
-  border-color: var(--accent);
-}
-
-.avatar-grid img.selected {
-  border-color: var(--accent-dark);
-  box-shadow: 0 0 0 2px var(--accent-light);
-}
-
-.save-btn {
-  background: var(--accent);
-  background-image: linear-gradient(180deg, var(--accent-light), var(--accent));
-  color: #fff;
-  border: none;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.save-btn:hover {
-  background: var(--accent-dark);
-}
-
-.logout-btn {
-  background: #e0e0e0;
-  color: #333;
-  border: 1px solid #bbb;
-  font-size: 14px;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 8px;
-}
-
-.logout-btn:hover {
-  background: #d0d0d0;
-}
-
-.not-logged {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.not-logged h2 {
-  color: #333;
-}
-
-.not-logged a {
-  color: var(--accent-dark);
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.not-logged a:hover {
-  text-decoration: underline;
-}
-
-.user-apps {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-
-.user-apps .app-card {
-  background: var(--card-bg);
-  background-image: linear-gradient(180deg, #333, #232323);
-  border: 1px solid #111;
-  border-radius: 4px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: var(--card-text);
-}
-
-.user-apps .app-card img {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  background: #444;
-  object-fit: cover;
-}
-
-.user-apps .app-card .app-title {
-  font-weight: bold;
-  font-size: 13px;
-}
-
-.user-apps .app-card .app-sub {
-  font-size: 11px;
-  color: #aaa;
-}
-
-.footer-links {
-  text-align: center;
-  padding: 20px;
-  font-size: 12px;
-}
-
-.footer-links a {
-  color: var(--accent);
-  text-decoration: none;
-  margin: 0 8px;
-}
+.profile-container { max-width: 600px; margin: 0 auto; padding: 16px; }
+.profile-card { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 20px; margin-top: 16px; }
+.profile-header { overflow: hidden; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #94ab3a; }
+.profile-avatar { float: left; width: 80px; height: 80px; border-radius: 10px; background: #444; margin-right: 16px; border: 2px solid #94ab3a; }
+.profile-info { overflow: hidden; }
+.profile-info h2 { margin: 0; font-size: 20px; color: #333; }
+.profile-info .username { font-size: 14px; color: #666; }
+.premium-badge { display: inline-block; background: #ffd700; color: #333; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-top: 4px; }
+.profile-stats { overflow: hidden; margin-bottom: 20px; }
+.stat-box { float: left; width: 33.33%; text-align: center; background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 12px; }
+.stat-box .stat-value { font-size: 20px; font-weight: bold; color: #7a8e30; }
+.stat-box .stat-label { font-size: 11px; color: #888; margin-top: 4px; }
+.profile-section { margin-bottom: 20px; }
+.profile-section h3 { font-size: 14px; color: #444; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.profile-section textarea { width: 100%; min-height: 80px; padding: 10px; border: 1px solid #bbb; border-radius: 4px; font-size: 14px; font-family: Arial, Helvetica, sans-serif; }
+.avatar-grid { overflow: hidden; }
+.avatar-grid img { float: left; width: 18%; margin: 1%; border-radius: 6px; cursor: pointer; border: 2px solid transparent; background: #eee; }
+.avatar-grid img:hover { border-color: #94ab3a; }
+.avatar-grid img.selected { border-color: #7a8e30; }
+.save-btn { background: #94ab3a; color: #fff; border: none; font-size: 14px; font-weight: bold; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+.save-btn:hover { background: #7a8e30; }
+.logout-btn { background: #e0e0e0; color: #333; border: 1px solid #bbb; font-size: 14px; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-left: 8px; }
+.logout-btn:hover { background: #d0d0d0; }
+.not-logged { text-align: center; padding: 40px 20px; }
+.not-logged h2 { color: #333; }
+.not-logged a { color: #7a8e30; text-decoration: none; font-weight: bold; }
+.not-logged a:hover { text-decoration: underline; }
+.user-apps { overflow: hidden; }
+.user-apps .app-card { float: left; width: 48%; margin: 1%; background: #2b2b2b; border: 1px solid #111; border-radius: 4px; padding: 8px; text-decoration: none; color: #e6e6e6; overflow: hidden; }
+.user-apps .app-card img { float: left; width: 40px; height: 40px; border-radius: 6px; background: #444; margin-right: 10px; }
+.user-apps .app-card .app-title { font-weight: bold; font-size: 13px; display: block; }
+.user-apps .app-card .app-sub { font-size: 11px; color: #aaa; display: block; }
+.footer-links { text-align: center; padding: 20px; font-size: 12px; }
+.footer-links a { color: #7a8e30; text-decoration: none; margin: 0 8px; }
+.footer-links a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 
 <nav class="topnav">
-  <a href="/" class="logo">
-    <span class="logo-mark">A</span>
-    <span class="market-name">AltMart</span>
-  </a>
-  <div class="nav-links">
-    <a href="/">Каталог</a>
-    <a href="/submit">Добавить</a>
-    <a href="/profile.html" id="nav-profile">Профиль</a>
+  <div class="topnav-inner">
+    <a href="/" class="logo">
+      <span class="logo-mark">A</span>
+      <span class="market-name">AltMart</span>
+    </a>
+    <div class="nav-links">
+      <a href="/">Каталог</a>
+      <a href="/submit">Добавить</a>
+      <a href="/profile.html">Профиль</a>
+    </div>
   </div>
 </nav>
 
@@ -254,10 +64,9 @@
 </div>
 
 <main class="profile-container" id="profileContainer">
-  <!-- Контент загружается через JS -->
   <div class="profile-card">
     <div class="not-logged">
-      <h2>🔒 Требуется авторизация</h2>
+      <h2>Требуется авторизация</h2>
       <p>Войдите, чтобы просматривать и редактировать свой профиль.</p>
       <p><a href="/login.html">Войти</a> или <a href="/login.html">Зарегистрироваться</a></p>
     </div>
@@ -273,162 +82,188 @@
 </div>
 
 <script>
-let currentUser = null;
-let selectedAvatar = null;
+var currentUser = null;
+var selectedAvatar = null;
 
-async function loadConfig() {
-  try {
-    const res = await fetch('/api/config');
-    const cfg = await res.json();
-    document.querySelectorAll('.market-name').forEach(el => el.textContent = cfg.market.name);
-    document.getElementById('footerMarketName').textContent = cfg.market.name;
-    document.getElementById('footerTagline').textContent = cfg.market.tagline;
-    document.querySelector('.logo-mark').textContent = cfg.market.logo_emoji || 'A';
-    document.title = document.title.replace('AltMart', cfg.market.name);
-    if (cfg.market.accent_color) document.documentElement.style.setProperty('--accent', cfg.market.accent_color);
-    if (cfg.market.accent_dark) document.documentElement.style.setProperty('--accent-dark', cfg.market.accent_dark);
-    if (cfg.market.accent_light) document.documentElement.style.setProperty('--accent-light', cfg.market.accent_light);
-
-    const contactContainer = document.getElementById('contactLinks');
-    const contacts = [];
-    if (cfg.contacts.telegram) contacts.push(`<a href="${cfg.contacts.telegram}" target="_blank">Telegram</a>`);
-    if (cfg.contacts.support_email) contacts.push(`<a href="mailto:${cfg.contacts.support_email}">Поддержка</a>`);
-    if (cfg.contacts.github) contacts.push(`<a href="${cfg.contacts.github}" target="_blank">GitHub</a>`);
-    if (cfg.contacts.website) contacts.push(`<a href="${cfg.contacts.website}" target="_blank">Сайт</a>`);
-    if (contacts.length) contactContainer.innerHTML = '| ' + contacts.join(' | ');
-  } catch (e) {}
+function ajaxGet(url, onSuccess, onError) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try { onSuccess(JSON.parse(xhr.responseText)); }
+        catch (e) { if (onError) onError(); }
+      } else {
+        if (onError) onError();
+      }
+    }
+  };
+  xhr.send();
 }
 
-async function loadProfile() {
-  try {
-    const meRes = await fetch('/api/me', { credentials: 'include' });
-    if (!meRes.ok) return; // Оставляем экран входа
-    currentUser = await meRes.json();
-
-    const profileRes = await fetch(`/api/user/${currentUser.id}/profile`, { credentials: 'include' });
-    const profile = await profileRes.json();
-
-    const container = document.getElementById('profileContainer');
-    const isPremium = profile.is_premium === 1;
-
-    container.innerHTML = `
-      <div class="profile-card">
-        <div class="profile-header">
-          <img src="/html/avatars/${profile.avatar || 'avatar1.png'}" class="profile-avatar" id="currentAvatar" alt="avatar">
-          <div class="profile-info">
-            <h2>${escapeHtml(profile.username)}</h2>
-            <div class="username">ID: ${profile.id}</div>
-            ${isPremium ? '<span class="premium-badge">⭐ PREMIUM</span>' : ''}
-          </div>
-        </div>
-
-        <div class="profile-stats">
-          <div class="stat-box">
-            <div class="stat-value" id="statApps">0</div>
-            <div class="stat-label">Приложений</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value" id="statReviews">0</div>
-            <div class="stat-label">Отзывов</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value" id="statDownloads">0</div>
-            <div class="stat-label">Скачиваний</div>
-          </div>
-        </div>
-
-        <div class="profile-section">
-          <h3>📝 О себе</h3>
-          <textarea id="descriptionField" placeholder="Расскажите о себе...">${escapeHtml(profile.description || '')}</textarea>
-        </div>
-
-        <div class="profile-section">
-          <h3>🎭 Аватар</h3>
-          <div class="avatar-grid" id="avatarGrid"></div>
-        </div>
-
-        <div class="profile-section">
-          <button class="save-btn" onclick="saveProfile()">💾 Сохранить изменения</button>
-          <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
-        </div>
-
-        <div class="profile-section" id="myAppsSection" style="display:none;">
-          <h3>📱 Мои приложения</h3>
-          <div class="user-apps" id="userApps"></div>
-        </div>
-      </div>
-    `;
-
-    loadAvatars(profile.avatar || 'avatar1.png');
-    loadUserStats(profile.id);
-
-  } catch (e) {
-    console.error('Profile load error:', e);
-  }
+function ajaxPut(url, body, onSuccess, onError) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('PUT', url, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try { onSuccess(JSON.parse(xhr.responseText)); }
+        catch (e) { if (onError) onError(); }
+      } else {
+        if (onError) onError();
+      }
+    }
+  };
+  xhr.send(JSON.stringify(body));
 }
 
-async function loadAvatars(current) {
-  try {
-    const res = await fetch('/api/avatars');
-    const avatars = await res.json();
-    const grid = document.getElementById('avatarGrid');
+function ajaxPost(url, body, onSuccess, onError) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try { onSuccess(JSON.parse(xhr.responseText)); }
+        catch (e) { if (onError) onError(); }
+      } else {
+        if (onError) onError();
+      }
+    }
+  };
+  xhr.send(JSON.stringify(body));
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(text || ''));
+  return div.innerHTML;
+}
+
+function loadConfig() {
+  ajaxGet('/api/config', function(cfg) {
+    applyConfig(cfg);
+  }, function() {});
+}
+
+function applyConfig(cfg) {
+  var names = document.getElementsByClassName('market-name');
+  for (var i = 0; i < names.length; i++) names[i].textContent = cfg.market.name;
+  document.getElementById('footerMarketName').textContent = cfg.market.name;
+  document.getElementById('footerTagline').textContent = cfg.market.tagline;
+  var lm = document.querySelector('.logo-mark');
+  if (lm) lm.textContent = cfg.market.logo_emoji || 'A';
+  document.title = document.title.replace('AltMart', cfg.market.name);
+
+  var contactContainer = document.getElementById('contactLinks');
+  var contacts = [];
+  if (cfg.contacts.telegram) contacts.push('<a href="' + cfg.contacts.telegram + '" target="_blank">Telegram</a>');
+  if (cfg.contacts.support_email) contacts.push('<a href="mailto:' + cfg.contacts.support_email + '">Поддержка</a>');
+  if (cfg.contacts.github) contacts.push('<a href="' + cfg.contacts.github + '" target="_blank">GitHub</a>');
+  if (cfg.contacts.website) contacts.push('<a href="' + cfg.contacts.website + '" target="_blank">Сайт</a>');
+  if (contacts.length) contactContainer.innerHTML = '| ' + contacts.join(' | ');
+}
+
+function loadProfile() {
+  ajaxGet('/api/me', function(me) {
+    currentUser = me;
+    ajaxGet('/api/user/' + me.id + '/profile', function(profile) {
+      showProfile(profile);
+    }, function() {});
+  }, function() {});
+}
+
+function showProfile(profile) {
+  var container = document.getElementById('profileContainer');
+  var isPremium = profile.is_premium === 1;
+
+  container.innerHTML = ''
+    + '<div class="profile-card">'
+    + '<div class="profile-header">'
+    + '<img src="/html/avatars/' + (profile.avatar || 'avatar1.png') + '" class="profile-avatar" id="currentAvatar" alt="">'
+    + '<div class="profile-info">'
+    + '<h2>' + escapeHtml(profile.username) + '</h2>'
+    + '<div class="username">ID: ' + profile.id + '</div>'
+    + (isPremium ? '<span class="premium-badge">* PREMIUM</span>' : '')
+    + '</div></div>'
+
+    + '<div class="profile-stats">'
+    + '<div class="stat-box"><div class="stat-value" id="statApps">0</div><div class="stat-label">Приложений</div></div>'
+    + '<div class="stat-box"><div class="stat-value" id="statReviews">0</div><div class="stat-label">Отзывов</div></div>'
+    + '<div class="stat-box"><div class="stat-value" id="statDownloads">0</div><div class="stat-label">Скачиваний</div></div>'
+    + '</div>'
+
+    + '<div class="profile-section">'
+    + '<h3>О себе</h3>'
+    + '<textarea id="descriptionField" placeholder="Расскажите о себе...">' + escapeHtml(profile.description || '') + '</textarea>'
+    + '</div>'
+
+    + '<div class="profile-section">'
+    + '<h3>Аватар</h3>'
+    + '<div class="avatar-grid" id="avatarGrid"></div>'
+    + '</div>'
+
+    + '<div class="profile-section">'
+    + '<button class="save-btn" onclick="saveProfile()">Сохранить изменения</button>'
+    + '<button class="logout-btn" onclick="logout()">Выйти</button>'
+    + '</div>'
+
+    + '<div class="profile-section" id="myAppsSection" style="display:none;">'
+    + '<h3>Мои приложения</h3>'
+    + '<div class="user-apps" id="userApps"></div>'
+    + '</div>'
+    + '</div>';
+
+  loadAvatars(profile.avatar || 'avatar1.png');
+}
+
+function loadAvatars(current) {
+  ajaxGet('/api/avatars', function(avatars) {
+    var grid = document.getElementById('avatarGrid');
     selectedAvatar = current;
-
-    grid.innerHTML = avatars.map(a => `
-      <img src="/html/avatars/${a}" 
-           class="${a === current ? 'selected' : ''}" 
-           onclick="selectAvatar('${a}')"
-           alt="${a}">
-    `).join('');
-  } catch (e) {}
+    var html = '';
+    for (var i = 0; i < avatars.length; i++) {
+      var a = avatars[i];
+      html += '<img src="/html/avatars/' + a + '" class="' + (a === current ? 'selected' : '') + '" onclick="selectAvatar(\'' + a + '\')" alt="">';
+    }
+    grid.innerHTML = html;
+  }, function() {});
 }
 
 function selectAvatar(name) {
   selectedAvatar = name;
-  document.querySelectorAll('.avatar-grid img').forEach(img => img.classList.remove('selected'));
-  const el = document.querySelector(`.avatar-grid img[src="/html/avatars/${name}"]`);
-  if (el) el.classList.add('selected');
-  document.getElementById('currentAvatar').src = `/html/avatars/${name}`;
+  var imgs = document.getElementById('avatarGrid').getElementsByTagName('img');
+  for (var i = 0; i < imgs.length; i++) {
+    if (imgs[i].src.indexOf(name) !== -1) {
+      imgs[i].className = 'selected';
+    } else {
+      imgs[i].className = '';
+    }
+  }
+  document.getElementById('currentAvatar').src = '/html/avatars/' + name;
 }
 
-async function saveProfile() {
+function saveProfile() {
   if (!currentUser) return;
-  const description = document.getElementById('descriptionField').value;
-
-  try {
-    const res = await fetch(`/api/user/${currentUser.id}/profile`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ avatar: selectedAvatar, description })
-    });
-    const data = await res.json();
+  var description = document.getElementById('descriptionField').value;
+  ajaxPut('/api/user/' + currentUser.id + '/profile', { avatar: selectedAvatar, description: description }, function(data) {
     if (data.success) {
       alert('Профиль сохранён!');
     } else {
       alert('Ошибка: ' + (data.message || 'неизвестная'));
     }
-  } catch (e) {
+  }, function() {
     alert('Ошибка сохранения');
-  }
+  });
 }
 
-async function logout() {
-  try {
-    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+function logout() {
+  ajaxPost('/api/logout', {}, function() {
     window.location.reload();
-  } catch (e) {}
-}
-
-async function loadUserStats(userId) {
-  // Здесь можно добавить подсчёт приложений/отзывов пользователя
-  // Пока оставляем заглушки
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  }, function() {
+    window.location.reload();
+  });
 }
 
 loadConfig();
