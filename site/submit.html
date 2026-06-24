@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Добавить приложение — <span class="market-name">AltMart</span></title>
+<link rel="stylesheet" href="/style.css">
+<style>
+/* Дополнительные стили для формы */
+.submit-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.submit-card {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  margin-top: 16px;
+}
+
+.submit-card h2 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 8px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.form-group label .required {
+  color: #c00;
+}
+
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #fafafa;
+}
+
+.form-group input[type="file"] {
+  padding: 8px;
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(148, 171, 58, 0.2);
+}
+
+.file-hint {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.submit-btn {
+  background: var(--accent);
+  background-image: linear-gradient(180deg, var(--accent-light), var(--accent));
+  color: #fff;
+  border: none;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.submit-btn:hover {
+  background: var(--accent-dark);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background: #e8f5e9;
+  border: 1px solid #4caf50;
+  color: #2e7d32;
+}
+
+.alert-error {
+  background: #ffebee;
+  border: 1px solid #ef5350;
+  color: #c62828;
+}
+
+.parsed-info {
+  background: #f1f8e9;
+  border: 1px solid #c5e1a5;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #558b2f;
+}
+
+.parsed-info strong {
+  color: #33691e;
+}
+
+.footer-links {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+}
+
+.footer-links a {
+  color: var(--accent);
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<!-- Шапка -->
+<nav class="topnav">
+  <a href="/" class="logo">
+    <span class="logo-mark">A</span>
+    <span class="market-name">AltMart</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Каталог</a>
+    <a href="/submit">Добавить</a>
+    <a href="/profile.html" id="profile-link">Профиль</a>
+  </div>
+</nav>
+
+<!-- Поиск (декоративный) -->
+<div class="search-bar">
+  <input type="text" placeholder="Поиск приложений..." disabled style="opacity:0.5">
+</div>
+
+<main class="submit-container">
+  <div class="submit-card">
+    <h2>📱 Добавить приложение</h2>
+    <p style="font-size:13px;color:#666;margin-top:-8px;margin-bottom:16px;">
+      Загрузите APK — мы автоматически извлечём название, версию и другие данные.
+    </p>
+
+    <div id="messageBox" style="display:none;"></div>
+    <div id="parsedBox" class="parsed-info" style="display:none;"></div>
+
+    <form method="post" action="/submit" enctype="multipart/form-data" id="submitForm">
+      <div class="form-group">
+        <label>APK файл <span class="required">*</span></label>
+        <input type="file" name="apk" accept=".apk,.xapk,.apkm" required id="apkInput">
+        <p class="file-hint">Максимум <span id="maxSize">200</span> МБ. Поддерживаются .apk, .xapk, .apkm</p>
+      </div>
+
+      <div class="form-group">
+        <label>Категория <span class="required">*</span></label>
+        <select name="category" required id="categorySelect">
+          <option value="">Выберите категорию...</option>
+          <optgroup label="Приложения" id="appCats"></optgroup>
+          <optgroup label="Игры" id="gameCats"></optgroup>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Описание <span class="required">*</span></label>
+        <textarea name="description" required placeholder="Краткое описание функционала, особенностей приложения..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Отправить на модерацию</button>
+    </form>
+  </div>
+</main>
+
+<!-- Футер -->
+<div class="footer-links">
+  <span id="footerMarketName">AltMart</span> — <span id="footerTagline">неофициальный форк в память об OldMarket</span>
+  <br><br>
+  <a href="/">Каталог</a>
+  <a href="/submit">Добавить приложение</a>
+  <span id="contactLinks"></span>
+</div>
+
+<script>
+// Загрузка конфига
+async function loadConfig() {
+  try {
+    const res = await fetch('/api/config');
+    const cfg = await res.json();
+
+    // Применяем название и цвета
+    document.querySelectorAll('.market-name').forEach(el => el.textContent = cfg.market.name);
+    document.getElementById('footerMarketName').textContent = cfg.market.name;
+    document.getElementById('footerTagline').textContent = cfg.market.tagline;
+    document.querySelector('.logo-mark').textContent = cfg.market.logo_emoji || 'A';
+    document.title = document.title.replace('AltMart', cfg.market.name);
+
+    // Цвета
+    if (cfg.market.accent_color) {
+      document.documentElement.style.setProperty('--accent', cfg.market.accent_color);
+    }
+    if (cfg.market.accent_dark) {
+      document.documentElement.style.setProperty('--accent-dark', cfg.market.accent_dark);
+    }
+    if (cfg.market.accent_light) {
+      document.documentElement.style.setProperty('--accent-light', cfg.market.accent_light);
+    }
+
+    // Лимиты
+    if (cfg.limits && cfg.limits.max_apk_size_mb) {
+      document.getElementById('maxSize').textContent = cfg.limits.max_apk_size_mb;
+    }
+
+    // Контакты
+    const contactContainer = document.getElementById('contactLinks');
+    const contacts = [];
+    if (cfg.contacts.telegram) contacts.push(`<a href="${cfg.contacts.telegram}" target="_blank">Telegram</a>`);
+    if (cfg.contacts.support_email) contacts.push(`<a href="mailto:${cfg.contacts.support_email}">Поддержка</a>`);
+    if (cfg.contacts.github) contacts.push(`<a href="${cfg.contacts.github}" target="_blank">GitHub</a>`);
+    if (cfg.contacts.website) contacts.push(`<a href="${cfg.contacts.website}" target="_blank">Сайт</a>`);
+    if (contacts.length) {
+      contactContainer.innerHTML = '| ' + contacts.join(' | ');
+    }
+
+    // Фичи
+    if (cfg.features && !cfg.features.open_submissions) {
+      document.getElementById('submitForm').innerHTML = '<div class="alert alert-error">Загрузка приложений временно отключена.</div>';
+    }
+
+  } catch (e) {
+    console.log('Config load failed, using defaults');
+  }
+}
+
+// Загрузка категорий
+async function loadCategories() {
+  try {
+    const res = await fetch('/api/categories');
+    const cats = await res.json();
+    const appGroup = document.getElementById('appCats');
+    const gameGroup = document.getElementById('gameCats');
+
+    const gameCodes = new Set(['simulators','puzzles','arcade','races','action_games','casual',
+      'strategies','table_games','shooter','horror','adventures','rpg','survival','sport',
+      'card_games','other_games']);
+
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.code;
+      opt.textContent = c.label || c.code;
+      if (gameCodes.has(c.code)) {
+        gameGroup.appendChild(opt);
+      } else {
+        appGroup.appendChild(opt);
+      }
+    });
+  } catch (e) {
+    console.log('Categories load failed');
+  }
+}
+
+// Показ сообщений из URL
+const params = new URLSearchParams(window.location.search);
+const msg = params.get('msg');
+const type = params.get('type');
+if (msg) {
+  const box = document.getElementById('messageBox');
+  box.textContent = decodeURIComponent(msg);
+  box.className = 'alert alert-' + (type === 'success' ? 'success' : 'error');
+  box.style.display = 'block';
+}
+
+// Обработка отправки
+const form = document.getElementById('submitForm');
+const btn = document.getElementById('submitBtn');
+form.addEventListener('submit', function() {
+  btn.disabled = true;
+  btn.textContent = 'Анализ APK и загрузка...';
+});
+
+// Проверка авторизации для ссылки профиля
+(async function() {
+  try {
+    const res = await fetch('/api/me', { credentials: 'include' });
+    if (!res.ok) {
+      document.getElementById('profile-link').href = '/login.html';
+      document.getElementById('profile-link').textContent = 'Войти';
+    }
+  } catch (e) {}
+})();
+
+loadConfig();
+loadCategories();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль — <span class="market-name">AltMart</span></title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.profile-card {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  margin-top: 16px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  background: #444;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.profile-info .username {
+  font-size: 14px;
+  color: #666;
+}
+
+.profile-info .premium-badge {
+  display: inline-block;
+  background: linear-gradient(180deg, #ffd700, #ffa500);
+  color: #333;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-box {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-box .stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--accent-dark);
+}
+
+.stat-box .stat-label {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.profile-section {
+  margin-bottom: 20px;
+}
+
+.profile-section h3 {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-section textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  resize: vertical;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.avatar-grid img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: #eee;
+  object-fit: cover;
+}
+
+.avatar-grid img:hover {
+  border-color: var(--accent);
+}
+
+.avatar-grid img.selected {
+  border-color: var(--accent-dark);
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.save-btn {
+  background: var(--accent);
+  background-image: linear-gradient(180deg, var(--accent-light), var(--accent));
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background: var(--accent-dark);
+}
+
+.logout-btn {
+  background: #e0e0e0;
+  color: #333;
+  border: 1px solid #bbb;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.logout-btn:hover {
+  background: #d0d0d0;
+}
+
+.not-logged {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.not-logged h2 {
+  color: #333;
+}
+
+.not-logged a {
+  color: var(--accent-dark);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.not-logged a:hover {
+  text-decoration: underline;
+}
+
+.user-apps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.user-apps .app-card {
+  background: var(--card-bg);
+  background-image: linear-gradient(180deg, #333, #232323);
+  border: 1px solid #111;
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--card-text);
+}
+
+.user-apps .app-card img {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: #444;
+  object-fit: cover;
+}
+
+.user-apps .app-card .app-title {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.user-apps .app-card .app-sub {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.footer-links {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+}
+
+.footer-links a {
+  color: var(--accent);
+  text-decoration: none;
+  margin: 0 8px;
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="logo">
+    <span class="logo-mark">A</span>
+    <span class="market-name">AltMart</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Каталог</a>
+    <a href="/submit">Добавить</a>
+    <a href="/profile.html" id="nav-profile">Профиль</a>
+  </div>
+</nav>
+
+<div class="search-bar">
+  <input type="text" placeholder="Поиск приложений..." disabled style="opacity:0.5">
+</div>
+
+<main class="profile-container" id="profileContainer">
+  <!-- Контент загружается через JS -->
+  <div class="profile-card">
+    <div class="not-logged">
+      <h2>🔒 Требуется авторизация</h2>
+      <p>Войдите, чтобы просматривать и редактировать свой профиль.</p>
+      <p><a href="/login.html">Войти</a> или <a href="/login.html">Зарегистрироваться</a></p>
+    </div>
+  </div>
+</main>
+
+<div class="footer-links">
+  <span id="footerMarketName">AltMart</span> — <span id="footerTagline">неофициальный форк в память об OldMarket</span>
+  <br><br>
+  <a href="/">Каталог</a>
+  <a href="/submit">Добавить приложение</a>
+  <span id="contactLinks"></span>
+</div>
+
+<script>
+let currentUser = null;
+let selectedAvatar = null;
+
+async function loadConfig() {
+  try {
+    const res = await fetch('/api/config');
+    const cfg = await res.json();
+    document.querySelectorAll('.market-name').forEach(el => el.textContent = cfg.market.name);
+    document.getElementById('footerMarketName').textContent = cfg.market.name;
+    document.getElementById('footerTagline').textContent = cfg.market.tagline;
+    document.querySelector('.logo-mark').textContent = cfg.market.logo_emoji || 'A';
+    document.title = document.title.replace('AltMart', cfg.market.name);
+    if (cfg.market.accent_color) document.documentElement.style.setProperty('--accent', cfg.market.accent_color);
+    if (cfg.market.accent_dark) document.documentElement.style.setProperty('--accent-dark', cfg.market.accent_dark);
+    if (cfg.market.accent_light) document.documentElement.style.setProperty('--accent-light', cfg.market.accent_light);
+
+    const contactContainer = document.getElementById('contactLinks');
+    const contacts = [];
+    if (cfg.contacts.telegram) contacts.push(`<a href="${cfg.contacts.telegram}" target="_blank">Telegram</a>`);
+    if (cfg.contacts.support_email) contacts.push(`<a href="mailto:${cfg.contacts.support_email}">Поддержка</a>`);
+    if (cfg.contacts.github) contacts.push(`<a href="${cfg.contacts.github}" target="_blank">GitHub</a>`);
+    if (cfg.contacts.website) contacts.push(`<a href="${cfg.contacts.website}" target="_blank">Сайт</a>`);
+    if (contacts.length) contactContainer.innerHTML = '| ' + contacts.join(' | ');
+  } catch (e) {}
+}
+
+async function loadProfile() {
+  try {
+    const meRes = await fetch('/api/me', { credentials: 'include' });
+    if (!meRes.ok) return; // Оставляем экран входа
+    currentUser = await meRes.json();
+
+    const profileRes = await fetch(`/api/user/${currentUser.id}/profile`, { credentials: 'include' });
+    const profile = await profileRes.json();
+
+    const container = document.getElementById('profileContainer');
+    const isPremium = profile.is_premium === 1;
+
+    container.innerHTML = `
+      <div class="profile-card">
+        <div class="profile-header">
+          <img src="/html/avatars/${profile.avatar || 'avatar1.png'}" class="profile-avatar" id="currentAvatar" alt="avatar">
+          <div class="profile-info">
+            <h2>${escapeHtml(profile.username)}</h2>
+            <div class="username">ID: ${profile.id}</div>
+            ${isPremium ? '<span class="premium-badge">⭐ PREMIUM</span>' : ''}
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="stat-box">
+            <div class="stat-value" id="statApps">0</div>
+            <div class="stat-label">Приложений</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="statReviews">0</div>
+            <div class="stat-label">Отзывов</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="statDownloads">0</div>
+            <div class="stat-label">Скачиваний</div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h3>📝 О себе</h3>
+          <textarea id="descriptionField" placeholder="Расскажите о себе...">${escapeHtml(profile.description || '')}</textarea>
+        </div>
+
+        <div class="profile-section">
+          <h3>🎭 Аватар</h3>
+          <div class="avatar-grid" id="avatarGrid"></div>
+        </div>
+
+        <div class="profile-section">
+          <button class="save-btn" onclick="saveProfile()">💾 Сохранить изменения</button>
+          <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
+        </div>
+
+        <div class="profile-section" id="myAppsSection" style="display:none;">
+          <h3>📱 Мои приложения</h3>
+          <div class="user-apps" id="userApps"></div>
+        </div>
+      </div>
+    `;
+
+    loadAvatars(profile.avatar || 'avatar1.png');
+    loadUserStats(profile.id);
+
+  } catch (e) {
+    console.error('Profile load error:', e);
+  }
+}
+
+async function loadAvatars(current) {
+  try {
+    const res = await fetch('/api/avatars');
+    const avatars = await res.json();
+    const grid = document.getElementById('avatarGrid');
+    selectedAvatar = current;
+
+    grid.innerHTML = avatars.map(a => `
+      <img src="/html/avatars/${a}" 
+           class="${a === current ? 'selected' : ''}" 
+           onclick="selectAvatar('${a}')"
+           alt="${a}">
+    `).join('');
+  } catch (e) {}
+}
+
+function selectAvatar(name) {
+  selectedAvatar = name;
+  document.querySelectorAll('.avatar-grid img').forEach(img => img.classList.remove('selected'));
+  const el = document.querySelector(`.avatar-grid img[src="/html/avatars/${name}"]`);
+  if (el) el.classList.add('selected');
+  document.getElementById('currentAvatar').src = `/html/avatars/${name}`;
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  const description = document.getElementById('descriptionField').value;
+
+  try {
+    const res = await fetch(`/api/user/${currentUser.id}/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ avatar: selectedAvatar, description })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Профиль сохранён!');
+    } else {
+      alert('Ошибка: ' + (data.message || 'неизвестная'));
+    }
+  } catch (e) {
+    alert('Ошибка сохранения');
+  }
+}
+
+async function logout() {
+  try {
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+    window.location.reload();
+  } catch (e) {}
+}
+
+async function loadUserStats(userId) {
+  // Здесь можно добавить подсчёт приложений/отзывов пользователя
+  // Пока оставляем заглушки
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+loadConfig();
+loadProfile();
+</script>
+
+</body>
+</html>

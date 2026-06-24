@@ -1,0 +1,30 @@
+{
+  "market": {
+    "name": "AltMart",
+    "tagline": "неофициальный форк в память об OldMarket",
+    "accent_color": "#94ab3a",
+    "accent_dark": "#7a8e30",
+    "accent_light": "#b3c95c",
+    "logo_emoji": "A",
+    "favicon": ""
+  },
+  "limits": {
+    "max_apk_size_mb": 200,
+    "registration_per_ip_per_day": 3,
+    "login_bruteforce_window_minutes": 15,
+    "login_bruteforce_max_failures": 5,
+    "ban_duration_hours": 1
+  },
+  "contacts": {
+    "telegram": "",
+    "support_email": "",
+    "github": "",
+    "website": ""
+  },
+  "features": {
+    "open_submissions": true,
+    "require_moderation": true,
+    "allow_user_registration": true,
+    "show_download_count": true
+  }
+}

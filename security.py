@@ -1,14 +1,11 @@
 """
-Лёгкие защитные механизмы, перенесённые из оригинального oldmarket-server
-(там это было на SQLAlchemy + отдельные таблицы-модели), адаптированные
-под aiosqlite без лишних зависимостей.
+Лёгкие защитные механизмы, перенесённые из оригинального oldmarket-server.
 """
 from datetime import datetime, date, timedelta
 
 from database import fetch_one, execute_query
 
 async def ensure_security_tables():
-    """Создаёт таблицы для рейт-лимитов, банов и заявок, если их ещё нет."""
     await execute_query("""
     CREATE TABLE IF NOT EXISTS registration_ip (
         ip TEXT NOT NULL,
@@ -41,7 +38,6 @@ async def ensure_security_tables():
         PRIMARY KEY (app_id, ip)
     )
     """)
-    # Таблица заявок на добавление приложений
     await execute_query("""
     CREATE TABLE IF NOT EXISTS submissions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +51,6 @@ async def ensure_security_tables():
     """)
 
 def get_real_ip(request) -> str:
-    """Достаёт реальный IP клиента, учитывая обратный прокси (nginx/Cloudflare)."""
     xff = request.headers.get("x-forwarded-for")
     if xff:
         return xff.split(",")[0].strip()
@@ -64,8 +59,6 @@ def get_real_ip(request) -> str:
         or request.headers.get("x-real-ip")
         or (request.client.host if request.client else "unknown")
     )
-
-# --- Блокировка IP ---
 
 async def is_ip_blocked(ip: str) -> bool:
     if not ip:
@@ -88,10 +81,7 @@ async def ban_ip(ip: str, reason: str, hours: int = 1):
         (ip, reason, until),
     )
 
-# --- Лимит регистраций по IP (N в сутки) ---
-
 async def check_registration_rate_limit(ip: str, limit_per_day: int = 3) -> bool:
-    """True — можно регистрироваться, False — лимит превышен."""
     today = date.today().isoformat()
     row = await fetch_one(
         "SELECT count FROM registration_ip WHERE ip = ? AND day = ?", (ip, today)
@@ -108,8 +98,6 @@ async def increment_registration_ip(ip: str):
         (ip, today),
     )
 
-# --- Защита логина от брутфорса ---
-
 async def record_login_attempt(ip: str, username: str, success: bool):
     await execute_query(
         "INSERT INTO login_attempt (ip, username, success, created_at) VALUES (?, ?, ?, ?)",
@@ -117,7 +105,6 @@ async def record_login_attempt(ip: str, username: str, success: bool):
     )
 
 async def check_login_bruteforce(ip: str, window_minutes: int = 15, max_failures: int = 5) -> bool:
-    """True — похоже на брутфорс (слишком много неудач подряд за окно)."""
     cutoff = (datetime.utcnow() - timedelta(minutes=window_minutes)).isoformat()
     row = await fetch_one(
         "SELECT COUNT(*) as cnt FROM login_attempt "
@@ -126,13 +113,7 @@ async def check_login_bruteforce(ip: str, window_minutes: int = 15, max_failures
     )
     return (row["cnt"] if row else 0) >= max_failures
 
-# --- Дедупликация скачиваний по IP ---
-
 async def record_download_once(app_id: int, user_ip: str) -> bool:
-    """
-    True — это первое скачивание данного app_id с этого IP, счётчик увеличен.
-    False — повтор с того же IP, счётчик не трогаем.
-    """
     if not user_ip:
         return False
     try:

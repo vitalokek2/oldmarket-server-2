@@ -34,7 +34,7 @@ async def post_review(app_id: int, request: Request):
         if not user:
             return JSONResponse(status_code=404, content={"success": False, "message": "Пользователь не найден"})
 
-        # ПРОВЕРКА НА ДУБЛИ — пользователь уже оставлял отзыв на это приложение?
+        # ПРОВЕРКА НА ДУБЛИ
         existing = await fetch_one(
             "SELECT id FROM reviews WHERE app_id = ? AND user_id = ?",
             (app_id, user_id)
@@ -67,7 +67,6 @@ async def post_review(app_id: int, request: Request):
                 "UPDATE apps SET data = json_set(data, '$.rating', ?) WHERE id = ?",
                 (round(avg_row["avg_rating"], 1), app_id),
             )
-            # Обновляем review_count
             count_row = await fetch_one(
                 "SELECT COUNT(*) as cnt FROM reviews WHERE app_id = ?", (app_id,)
             )

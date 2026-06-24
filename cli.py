@@ -75,7 +75,7 @@ def handle_db(args):
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    avatar TEXT DEFAULT "avatar1.png",
+    avatar TEXT DEFAULT 'avatar1.png',
     description TEXT DEFAULT '',
     is_premium INTEGER DEFAULT 0,
     reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -309,8 +309,7 @@ def handle_logs(args):
     try:
         subprocess.run(cmd)
     except KeyboardInterrupt:
-        print("
-Выход из режима просмотра логов.")
+        print("\nВыход из режима просмотра логов.")
 
 def main():
     parser = argparse.ArgumentParser(description=f"{B}{C}AltMart CLI Manager v2.0{RESET}", usage="%(prog)s [команда] [опции]")

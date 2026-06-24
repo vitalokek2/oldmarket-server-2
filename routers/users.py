@@ -1,145 +1,143 @@
+import json
+import os
+
 import bcrypt
-from fastapi import APIRouter, Request, Response, HTTPException
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-from database import fetch_one, execute_query
-from security import (
-    get_real_ip,
-    is_ip_blocked,
-    ban_ip,
-    check_registration_rate_limit,
-    increment_registration_ip,
-    record_login_attempt,
-    check_login_bruteforce,
-)
+from database import fetch_all, fetch_one, execute_query
+from security import get_real_ip, check_registration_rate_limit, increment_registration_ip, check_login_bruteforce, record_login_attempt, is_ip_blocked, ban_ip
 
 router = APIRouter(prefix="/api")
 
-AVATARS = [
-    "avatar1.png", "avatar2.png", "avatar3.png", "avatar4.png", "avatar4.gif",
-    "avatar5.gif", "avatar6.gif", "avatar7.gif", "avatar11.gif", "avatar12.gif",
-    "avatar13.gif", "avatar14.gif", "avatar8.gif", "avatar9.gif", "avatar10.gif",
-    "avatar15.gif", "avatar16.gif", "avatar17.gif",
-]
-
-
 @router.get("/me")
 async def get_me(request: Request):
-    """
-    Отдаёт текущего пользователя по HttpOnly-куке session_user_id.
-    Кука не читается из JS напрямую (это и есть смысл httponly) —
-    фронтенд должен спрашивать у сервера, кто залогинен.
-    """
-    user_id = request.cookies.get("session_user_id")
-    if not user_id:
-        return JSONResponse(status_code=401, content={"success": False, "message": "Не авторизован"})
-    user = await fetch_one("SELECT id, username, avatar FROM users WHERE id = ?", (user_id,))
+    """Текущий авторизованный пользователь."""
+    session_id = request.cookies.get("session_user_id")
+    if not session_id:
+        return JSONResponse(status_code=401, content={"error": "Not authenticated"})
+    try:
+        user_id = int(session_id)
+    except ValueError:
+        return JSONResponse(status_code=401, content={"error": "Invalid session"})
+
+    user = await fetch_one("SELECT id, username, avatar, description, is_premium FROM users WHERE id = ?", (user_id,))
     if not user:
-        return JSONResponse(status_code=401, content={"success": False, "message": "Не авторизован"})
-    return {"success": True, "id": user["id"], "username": user["username"], "avatar": user["avatar"]}
+        return JSONResponse(status_code=401, content={"error": "User not found"})
+    return {
+        "id": user["id"],
+        "username": user["username"],
+        "avatar": user["avatar"],
+        "description": user["description"],
+        "is_premium": user["is_premium"],
+    }
 
+@router.get("/user/{user_id}/profile")
+async def get_user_profile(user_id: int):
+    user = await fetch_one("SELECT id, username, avatar, description, is_premium, reg_date FROM users WHERE id = ?", (user_id,))
+    if not user:
+        return JSONResponse(status_code=404, content={"error": "User not found"})
+    return {
+        "id": user["id"],
+        "username": user["username"],
+        "avatar": user["avatar"],
+        "description": user["description"],
+        "is_premium": user["is_premium"],
+        "reg_date": user["reg_date"],
+    }
 
-@router.post("/logout")
-async def logout():
-    resp = JSONResponse(content={"success": True})
-    resp.delete_cookie("session_user_id")
-    return resp
+@router.put("/user/{user_id}/profile")
+async def update_user_profile(user_id: int, request: Request):
+    """Обновление профиля (avatar + description). Требует авторизации."""
+    session_id = request.cookies.get("session_user_id")
+    if not session_id or int(session_id) != user_id:
+        return JSONResponse(status_code=403, content={"success": False, "message": "Доступ запрещён"})
 
+    try:
+        data = await request.json()
+        avatar = data.get("avatar")
+        description = data.get("description", "")
 
-@router.post("/login")
-async def login(request: Request, response: Response):
-    ip = get_real_ip(request)
-
-    if await is_ip_blocked(ip):
-        return JSONResponse(status_code=403, content={"success": False, "message": "IP временно заблокирован"})
-
-    if await check_login_bruteforce(ip):
-        await ban_ip(ip, "too many failed logins", hours=1)
-        return JSONResponse(status_code=429, content={"success": False, "message": "Слишком много попыток. Попробуйте позже"})
-
-    data = await request.json()
-    username = (data.get("username") or "").strip()
-    password = data.get("password") or ""
-
-    user = await fetch_one("SELECT * FROM users WHERE username = ?", (username,))
-
-    if user and bcrypt.checkpw(password.encode("utf-8"), user["password"].encode("utf-8")):
-        await record_login_attempt(ip, username, success=True)
-        content = {"success": True, "user_id": user["id"], "username": user["username"]}
-        json_resp = JSONResponse(content=content)
-        # Простая кука с user_id. Для серьёзной защиты добавь подпись (itsdangerous)
-        # или JWT — но для self-hosted сервера в локальной сети этого достаточно.
-        json_resp.set_cookie(
-            key="session_user_id",
-            value=str(user["id"]),
-            httponly=True,
-            samesite="lax",
-            max_age=60 * 60 * 24 * 30,
-        )
-        return json_resp
-
-    await record_login_attempt(ip, username, success=False)
-    return JSONResponse(status_code=401, content={"success": False, "message": "Неверный логин или пароль"})
-
+        if avatar:
+            await execute_query(
+                "UPDATE users SET avatar = ?, description = ? WHERE id = ?",
+                (avatar, description, user_id)
+            )
+        else:
+            await execute_query(
+                "UPDATE users SET description = ? WHERE id = ?",
+                (description, user_id)
+            )
+        return {"success": True, "message": "Профиль обновлён"}
+    except Exception as e:
+        print(f"Ошибка обновления профиля: {e}")
+        return JSONResponse(status_code=500, content={"success": False, "message": "Ошибка сервера"})
 
 @router.post("/register")
 async def register(request: Request):
-    ip = get_real_ip(request)
-
-    if await is_ip_blocked(ip):
-        return JSONResponse(status_code=403, content={"success": False, "message": "IP временно заблокирован"})
-
-    if not await check_registration_rate_limit(ip, limit_per_day=3):
-        return JSONResponse(status_code=429, content={"success": False, "message": "Лимит регистраций с этого IP на сегодня исчерпан"})
-
-    data = await request.json()
-    username = (data.get("username") or "").strip()
-    password = data.get("password") or ""
-
-    if len(username) < 3 or len(password) < 4:
-        return JSONResponse(status_code=400, content={"success": False, "message": "Слишком короткий логин или пароль"})
-    if len(password.encode("utf-8")) > 72:
-        return JSONResponse(status_code=400, content={"success": False, "message": "Пароль слишком длинный"})
-
-    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     try:
-        await execute_query(
-            "INSERT INTO users (username, password, avatar) VALUES (?, ?, ?)",
-            (username, hashed, "avatar1.png"),
-        )
-        await increment_registration_ip(ip)
-        return {"success": True, "message": "Аккаунт создан!"}
-    except Exception:
-        return JSONResponse(status_code=400, content={"success": False, "message": "Логин занят"})
+        data = await request.json()
+        username = data.get("username", "").strip()
+        password = data.get("password", "")
+        ip = get_real_ip(request)
 
+        if not username or not password:
+            return JSONResponse(status_code=400, content={"success": False, "message": "Логин и пароль обязательны"})
+        if len(password.encode("utf-8")) > 72:
+            return JSONResponse(status_code=400, content={"success": False, "message": "Пароль слишком длинный"})
 
-@router.get("/user/{user_id}/profile")
-async def get_profile(user_id: int):
-    user = await fetch_one(
-        "SELECT id, username, avatar, description, is_premium, reg_date FROM users WHERE id = ?",
-        (user_id,),
-    )
-    if user:
-        return dict(user)
-    raise HTTPException(status_code=404, detail="User not found")
+        if await is_ip_blocked(ip):
+            return JSONResponse(status_code=403, content={"success": False, "message": "Ваш IP заблокирован"})
 
+        if not await check_registration_rate_limit(ip):
+            await ban_ip(ip, "Превышен лимит регистраций", hours=24)
+            return JSONResponse(status_code=429, content={"success": False, "message": "Слишком много регистраций с вашего IP"})
 
-@router.put("/user/{user_id}/profile")
-async def update_profile(user_id: int, request: Request):
-    data = await request.json()
-    avatar = data.get("avatar")
-    description = data.get("description", "")
+        hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+        try:
+            await execute_query("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed))
+            await increment_registration_ip(ip)
+        except Exception:
+            return JSONResponse(status_code=400, content={"success": False, "message": "Имя пользователя уже занято"})
 
-    if avatar and avatar not in AVATARS:
-        return JSONResponse(status_code=400, content={"success": False, "message": "Недопустимая аватарка"})
+        return {"success": True, "message": "Регистрация успешна"}
+    except Exception as e:
+        print(f"Ошибка регистрации: {e}")
+        return JSONResponse(status_code=500, content={"success": False, "message": "Ошибка сервера"})
 
-    await execute_query(
-        "UPDATE users SET avatar = COALESCE(?, avatar), description = ? WHERE id = ?",
-        (avatar, description, user_id),
-    )
-    return {"success": True, "message": "Профиль успешно обновлен"}
+@router.post("/login")
+async def login(request: Request):
+    try:
+        data = await request.json()
+        username = data.get("username", "").strip()
+        password = data.get("password", "")
+        ip = get_real_ip(request)
 
+        if not username or not password:
+            return JSONResponse(status_code=400, content={"success": False, "message": "Логин и пароль обязательны"})
 
-@router.get("/avatars")
-async def get_avatars_list():
-    return AVATARS
+        if await is_ip_blocked(ip):
+            return JSONResponse(status_code=403, content={"success": False, "message": "Ваш IP заблокирован"})
+
+        if await check_login_bruteforce(ip):
+            return JSONResponse(status_code=429, content={"success": False, "message": "Слишком много неудачных попыток. Попробуйте позже."})
+
+        user = await fetch_one("SELECT id, password FROM users WHERE username = ?", (username,))
+        if not user or not bcrypt.checkpw(password.encode("utf-8"), user["password"].encode("utf-8")):
+            await record_login_attempt(ip, username, False)
+            return JSONResponse(status_code=401, content={"success": False, "message": "Неверный логин или пароль"})
+
+        await record_login_attempt(ip, username, True)
+        response = JSONResponse(content={"success": True, "message": "Вход выполнен", "user_id": user["id"]})
+        response.set_cookie(key="session_user_id", value=str(user["id"]), httponly=True, max_age=2592000)
+        return response
+
+    except Exception as e:
+        print(f"Ошибка входа: {e}")
+        return JSONResponse(status_code=500, content={"success": False, "message": "Ошибка сервера"})
+
+@router.post("/logout")
+async def logout():
+    response = JSONResponse(content={"success": True, "message": "Выход выполнен"})
+    response.delete_cookie("session_user_id")
+    return response
