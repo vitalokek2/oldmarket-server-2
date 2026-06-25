@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %} - {{ category_label }}{% endblock %}
+{% block content %}
+<div class="header-bar">
+  <a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a>
+  <img src="/html/search.png" alt="Search" class="search-icon" onclick="window.location.href='/search'">
+</div>
+<div class="featured">
+  <h2>{{ category_label }}</h2>
+  <div class="app-list">
+    {% for app in apps %}
+    <div class="app" onclick="window.location.href='/app?id={{ app.id }}'">
+      <img src="{{ cdn("/html/apps/" ~ app.icon) }}" alt="">
+      <div class="app-info">
+        <span class="app-title">{{ app.name }}</span>
+        <div class="app-meta">{{ t(lang, "Скачиваний","Downloads") }}: {{ app.downloads }}<br>Android {{ api_level_to_android(app.api) }}</div>
+      </div>
+    </div>
+    {% else %}
+    <p style="text-align:center;padding:20px;color:#aaa">{{ t(lang, "Нет приложений в этой категории","No apps in this category") }}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

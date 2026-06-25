@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %} - {{ t(lang, "Профиль","Profile") }}{% endblock %}
+{% block content %}
+<div class="header-bar">
+  <a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a>
+  <img src="/html/search.png" alt="Search" class="search-icon" onclick="window.location.href='/search'">
+</div>
+<div class="featured" style="min-height:200px;padding:20px;text-align:center">
+  {% if auth %}
+  <img src="/html/{{ auth.get('avatar','default_avatar.png') }}" style="width:72px;height:72px;border-radius:50%;margin-bottom:10px">
+  <h2>{{ auth.username }}</h2>
+  <p class="text-sm">{{ t(lang, "Добро пожаловать!","Welcome!") }}</p>
+  <div style="margin-top:20px">
+    <a href="/logout" class="btn" style="background:#c44">{{ t(lang, "Выйти","Logout") }}</a>
+  </div>
+  {% else %}
+  <h2>{{ t(lang, "Профиль","Profile") }}</h2>
+  <p class="text-sm mt"><a href="/login">{{ t(lang, "Войдите, чтобы увидеть профиль","Log in to see your profile") }}</a></p>
+  {% endif %}
+</div>
+{% endblock %}

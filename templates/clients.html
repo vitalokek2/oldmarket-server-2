@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %} - {{ t(lang, "Клиенты","Clients") }}{% endblock %}
+{% block content %}
+<div class="header-bar">
+  <a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a>
+  <img src="/html/search.png" alt="Search" class="search-icon" onclick="window.location.href='/search'">
+</div>
+<div class="nav-panel">
+  <a href="/"><img src="/html/downloadclient.png" alt="Download"></a>
+  {% if auth %}
+  <div class="flex" style="gap:5px">
+    <a href="/profile"><img src="/html/{{ auth.get('avatar','default_avatar.png') }}" class="avatar" alt=""></a>
+    <a href="/logout" style="color:#fff;font-size:12px">{{ "Выйти" if lang=='ru' else 'Logout' }}</a>
+  </div>
+  {% else %}
+  <div class="flex" style="gap:5px">
+    <a href="/register"><img src="/html/register.png" alt="Register" style="height:28px"></a>
+    <a href="/login"><img src="/html/login.png" alt="Login" style="height:28px"></a>
+  </div>
+  {% endif %}
+</div>
+<div class="featured">
+  <h2>{{ t(lang, "Клиенты магазина","Store clients") }}</h2>
+  <div class="app-list" style="padding:10px">
+    {% if files %}
+      {% for f in files %}
+      <div class="app" onclick="window.location.href='/html/clients/{{ f.name }}'">
+        <img src="/html/logo.png" alt="" style="width:44px;height:44px;border-radius:6px">
+        <div class="app-info">
+          <span class="app-title">{{ f.name }}</span>
+          <div class="app-meta">{{ "{:.1f}".format(f.size / 1048576) }} MB</div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p style="text-align:center;color:#aaa;padding:20px">{{ t(lang, "Файлы не найдены","No files found") }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

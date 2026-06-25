@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %} - {{ t(lang, "Регистрация","Register") }}{% endblock %}
+{% block content %}
+<div class="header-bar"><a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a></div>
+<div style="max-width:320px;margin:40px auto;padding:20px;background:rgba(68,68,68,.9);border-radius:6px">
+  <h2 style="margin-bottom:15px">{{ t(lang, "Регистрация","Register") }}</h2>
+  {% if error %}<p style="color:red;margin-bottom:10px;font-size:13px">{{ error }}</p>{% endif %}
+  <div class="text-sm mb" style="color:#aaa;line-height:1.4">
+    {{ t(lang, "Логин: 3-15 символов, латиница и цифры","Username: 3-15 chars, letters and digits") }}<br>
+    {{ t(lang, "Email: корректный адрес","Email: valid address") }}<br>
+    {{ t(lang, "Пароль: минимум 4 символа","Password: at least 4 chars") }}
+  </div>
+  <form method="POST" action="/register">
+    <input type="text" name="username" placeholder="{{ t(lang, 'Логин','Username') }}" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="{{ t(lang, 'Пароль','Password') }}" required>
+    <button type="submit" class="btn" style="width:100%;margin-top:8px">{{ t(lang, "Зарегистрироваться","Register") }}</button>
+  </form>
+  <p class="text-sm mt text-center"><a href="/login">{{ t(lang, "Уже есть аккаунт? Войти","Already have an account? Log in") }}</a></p>
+</div>
+{% endblock %}

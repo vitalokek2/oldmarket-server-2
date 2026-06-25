@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %} - {{ t(lang, "Вход","Login") }}{% endblock %}
+{% block content %}
+<div class="header-bar"><a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a></div>
+<div style="max-width:320px;margin:40px auto;padding:20px;background:rgba(68,68,68,.9);border-radius:6px">
+  <h2 style="margin-bottom:15px">{{ t(lang, "Вход","Login") }}</h2>
+  {% if error %}<p style="color:red;margin-bottom:10px;font-size:13px">{{ error }}</p>{% endif %}
+  <form method="POST" action="/login">
+    <input type="text" name="username" placeholder="{{ t(lang, 'Имя пользователя','Username') }}" required>
+    <input type="password" name="password" placeholder="{{ t(lang, 'Пароль','Password') }}" required>
+    <button type="submit" class="btn" style="width:100%;margin-top:8px">{{ t(lang, "Войти","Log in") }}</button>
+  </form>
+  <p class="text-sm mt text-center"><a href="/register">{{ t(lang, "Нет аккаунта? Зарегистрироваться","No account? Register") }}</a></p>
+</div>
+{% endblock %}

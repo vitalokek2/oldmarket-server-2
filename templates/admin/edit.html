@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{{ config.name }} — {% if app %}Редактировать{% else %}Добавить{% endif %} приложение</title>
+<style>
+*{box-sizing:border-box}
+body{background:#1a1a2e;color:#eee;font-family:sans-serif;margin:0;padding:1rem}
+h1{font-size:1.4rem;margin:0 0 1rem}
+form{max-width:800px}
+.row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}
+.row>*{flex:1;min-width:200px}
+label{display:block;font-size:.8rem;color:#aaa;margin-bottom:.2rem}
+input,select,textarea{width:100%;padding:.5rem;border:1px solid #444;border-radius:4px;background:#0f3460;color:#eee;font-size:.9rem}
+textarea{resize:vertical;min-height:80px}
+input[type=checkbox]{width:auto}
+button{padding:.6rem 1.2rem;background:#e94560;color:#fff;border:none;border-radius:4px;font-size:1rem;cursor:pointer;margin-top:.5rem}
+button:hover{background:#d63850}
+.btn-secondary{background:#0f3460;color:#eee;border:1px solid #444;margin-right:.5rem}
+hr{border:none;border-top:1px solid #333;margin:1.5rem 0}
+.preview{max-width:100px;max-height:100px;border-radius:4px;margin:.5rem 0}
+.upload-btn{display:inline-block;padding:.3rem .6rem;background:#16213e;color:#eee;border:1px solid #444;border-radius:3px;cursor:pointer;font-size:.8rem}
+.upload-btn input{display:none}
+.upload-status{font-size:.8rem;color:#8f8;margin-left:.5rem}
+</style>
+</head>
+<body>
+<h1>{{ config.name }} — {% if app %}Редактировать: {{ app.name }}{% else %}Новое приложение{% endif %}</h1>
+<a href="/admin/dashboard" style="color:#e94560;text-decoration:none;margin-bottom:1rem;display:inline-block">← Назад</a>
+
+<form method="post" action="{% if app %}/admin/app/{{ app.id }}/edit{% else %}/admin/app/new{% endif %}">
+<input type="hidden" name="id" value="{{ app.id if app else '' }}">
+
+<div class="row">
+<div><label>Название</label><input name="name" value="{{ app.name if app else '' }}" required></div>
+<div><label>Пакет</label><input name="package" value="{{ app.package if app else '' }}"></div>
+</div>
+
+<div class="row">
+<div><label>Автор</label><input name="author" value="{{ app.author if app else '' }}"></div>
+<div><label>Категория</label>
+<select name="category_code">
+<option value="">—</option>
+{% for code,label in categories.items() %}
+<option value="{{ code }}" {% if app and app.get('category_code')==code %}selected{% endif %}>{{ label }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<div class="row">
+<div><label>Версия</label><input name="version" value="{{ app.version if app else '1.0' }}"></div>
+<div><label>Version Code</label><input name="version_code" value="{{ app.version_code if app else '1' }}"></div>
+</div>
+
+<div class="row">
+<div><label>Min SDK</label>
+<select name="min_sdk">
+{% for l in api_levels %}
+<option value="{{ l }}" {% if app and app.get('min_sdk')==l %}selected{% endif %}>{{ l }} — {{ api_level_to_android(l) }}</option>
+{% endfor %}
+</select>
+</div>
+<div><label>Target SDK</label>
+<select name="target_sdk">
+{% for l in api_levels %}
+<option value="{{ l }}" {% if app and app.get('target_sdk')==l %}selected{% endif %}>{{ l }} — {{ api_level_to_android(l) }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<div class="row">
+<div><label>Размер</label><input name="size" value="{{ app.size if app else '' }}" placeholder="e.g. 5.2 MB"></div>
+<div><label>Загрузок</label><input name="downloads" type="number" value="{{ app.downloads if app else 0 }}"></div>
+</div>
+
+<div class="row">
+<div><label>Рейтинг</label><input name="rating" type="number" step="0.1" min="0" max="5" value="{{ app.rating if app else 0 }}"></div>
+<div><label>Оценок</label><input name="rated_times" type="number" value="{{ app.rated_times if app else 0 }}"></div>
+</div>
+
+<div class="row">
+<div><label>Язык</label><input name="language" value="{{ app.language if app else 'RU' }}"></div>
+<div><label>Лицензия</label><input name="license_type" value="{{ app.license_type if app else 'Free' }}"></div>
+</div>
+
+<div class="row">
+<div>
+<label><input type="checkbox" name="is_game" {% if app and app.get('is_game') %}checked{% endif %}> Игра</label>
+</div>
+<div>
+<label><input type="checkbox" name="has_premium" {% if app and app.get('has_premium') %}checked{% endif %}> Премиум</label>
+</div>
+</div>
+
+<div><label>Описание</label><textarea name="description" rows="4">{{ app.description if app else '' }}</textarea></div>
+<div><label>Что нового</label><textarea name="whatsnew" rows="2">{{ app.whatsnew if app else '' }}</textarea></div>
+
+<hr>
+<h3>Файлы</h3>
+
+<div class="row">
+<div>
+<label>APK файл</label>
+<input name="apk_file" id="apk_file" value="{{ app.apk_file if app else '' }}">
+<span class="upload-btn" onclick="document.getElementById('apk_input').click()">Загрузить</span>
+<input type="file" id="apk_input" accept=".apk,.xapk,.apkm" style="display:none" onchange="uploadFile('apk',this)">
+<span class="upload-status" id="apk_status"></span>
+{% if app and app.apk_file %}<br><span style="font-size:.8rem;color:#888">{{ app.apk_file }}</span>{% endif %}
+</div>
+</div>
+
+<div class="row">
+<div>
+<label>Иконка</label>
+<input name="icon" id="icon_file" value="{{ app.icon if app else '' }}">
+{% if app and app.icon %}<br><img src="/html/apps/{{ app.icon }}" class="preview">{% endif %}
+<span class="upload-btn" onclick="document.getElementById('icon_input').click()">Загрузить</span>
+<input type="file" id="icon_input" accept=".png,.jpg,.jpeg,.webp" style="display:none" onchange="uploadFile('icon',this)">
+<span class="upload-status" id="icon_status"></span>
+</div>
+</div>
+
+<div>
+<label>Скриншоты</label>
+{% if app and app.screenshots %}
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0">
+{% for ss in app.screenshots %}
+<img src="/html/screenshots/{{ ss }}" class="preview">
+{% endfor %}
+</div>
+{% endif %}
+<input name="new_screenshot" id="new_screenshot" placeholder="Имя файла (или загрузите)">
+<span class="upload-btn" onclick="document.getElementById('ss_input').click()">Загрузить</span>
+<input type="file" id="ss_input" accept=".png,.jpg,.jpeg,.webp" style="display:none" onchange="uploadFile('screenshot',this)">
+<span class="upload-status" id="ss_status"></span>
+</div>
+
+<div style="margin-top:1.5rem">
+<button type="submit">{% if app %}Сохранить{% else %}Создать{% endif %}</button>
+<a href="/admin/dashboard" class="btn-secondary" style="padding:.6rem 1.2rem;display:inline-block">Отмена</a>
+</div>
+</form>
+
+<script>
+function uploadFile(type, input) {
+  var file = input.files[0];
+  if (!file) return;
+  var statusEl = document.getElementById(type + '_status');
+  statusEl.textContent = 'Загрузка...';
+  var fd = new FormData();
+  fd.append('file', file);
+  fetch('/admin/upload/' + type, { method: 'POST', body: fd })
+    .then(function(r){ return r.json() })
+    .then(function(d){
+      if (d.filename) {
+        if (type === 'screenshot') {
+          document.getElementById('new_screenshot').value = d.filename;
+        } else {
+          document.getElementById(type + '_file').value = d.filename;
+        }
+        statusEl.textContent = '✓ ' + d.filename;
+      } else {
+        statusEl.textContent = '✗ Ошибка';
+      }
+    })
+    .catch(function(){ statusEl.textContent = '✗ Ошибка'; });
+}
+</script>
+</body>
+</html>

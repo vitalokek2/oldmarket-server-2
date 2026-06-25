@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{{ config.name }} — Админка</title>
+<style>
+*{box-sizing:border-box}
+body{background:#1a1a2e;color:#eee;font-family:sans-serif;margin:0;padding:1rem}
+h1{font-size:1.4rem;margin:0 0 .5rem}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.header a{color:#e94560;text-decoration:none}
+.stats{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.stat{background:#16213e;padding:.5rem 1rem;border-radius:4px;font-size:.85rem}
+table{width:100%;border-collapse:collapse;background:#16213e;border-radius:4px;overflow:hidden}
+th,td{padding:.5rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.8rem;vertical-align:top}
+th{background:#0f3460;color:#e94560;white-space:nowrap}
+tr:hover{background:#1a2744}
+.btn{display:inline-block;padding:.3rem .6rem;border-radius:3px;text-decoration:none;font-size:.8rem;margin-right:.3rem}
+.btn-primary{background:#e94560;color:#fff}
+.btn-edit{background:#0f3460;color:#eee;border:1px solid #444}
+.btn-del{background:#5c0000;color:#fff;border:none;cursor:pointer;font-size:.8rem;padding:.3rem .6rem;border-radius:3px}
+.preview{max-width:40px;max-height:40px;border-radius:4px;display:block}
+.search{margin-bottom:1rem}
+.search input{padding:.5rem;width:100%;max-width:400px;border:1px solid #444;border-radius:4px;background:#0f3460;color:#eee;font-size:.9rem}
+@media(max-width:640px){th,td{font-size:.7rem;padding:.3rem}}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>{{ config.name }} — Админка</h1>
+<div><a href="/admin/app/new">+ Добавить</a> | <a href="/admin/logout">Выйти</a></div>
+</div>
+
+<div class="stats">
+<span class="stat">📦 Всего: {{ total }}</span>
+{% for code, cnt in cat_counts.items() %}
+<span class="stat">{{ cat_label(code) }}: {{ cnt }}</span>
+{% endfor %}
+</div>
+
+<div class="search">
+<input type="text" id="search" placeholder="Поиск по названию или пакету..." oninput="filter()">
+</div>
+
+<table>
+<thead>
+<tr><th>ID</th><th>Иконка</th><th>Название</th><th>Пакет</th><th>Автор</th><th>Категория</th><th>Версия</th><th>APK</th><th></th></tr>
+</thead>
+<tbody id="applist">
+{% for a in apps %}
+<tr class="app-row" data-name="{{ (a.name~' '~a.package~' '~a.author)|lower }}">
+<td>{{ a.id }}</td>
+<td>{% if a.icon %}<img src="/html/apps/{{ a.icon }}" class="preview">{% endif %}</td>
+<td><a href="/app?id={{ a.id }}" target="_blank" style="color:#eee">{{ a.name }}</a></td>
+<td style="font-size:.7rem;color:#888">{{ a.package|truncate(30) }}</td>
+<td>{{ a.author }}</td>
+<td>{{ cat_label(a.get('category_code','')) }}</td>
+<td>{{ a.version }}</td>
+<td>{{ a.apk_file|truncate(20) }}</td>
+<td>
+<a href="/admin/app/{{ a.id }}/edit" class="btn btn-edit">✎</a>
+<form method="post" action="/admin/app/{{ a.id }}/delete" style="display:inline" onsubmit="return confirm('Удалить {{ a.name }}?')">
+<button type="submit" class="btn-del">✕</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<script>
+function filter(){
+  var q = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('.app-row').forEach(function(r){
+    r.style.display = r.dataset.name.indexOf(q) >= 0 ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

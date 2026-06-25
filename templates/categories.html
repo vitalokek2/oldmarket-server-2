@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %} - {{ t(lang, "Категории","Categories") }}{% endblock %}
+{% block content %}
+<div class="header-bar">
+  <a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a>
+  <img src="/html/search.png" alt="Search" class="search-icon" onclick="window.location.href='/search'">
+</div>
+<div class="featured">
+  <h2>{{ t(lang, "Категории приложений","App categories") }}</h2>
+  <div class="app-list">
+    {% for code, label in app_categories %}
+    <div class="app" onclick="window.location.href='/category?code={{ code }}'">
+      <div class="app-info"><span class="app-title">{{ label }}</span><div class="app-meta">{{ code }}</div></div>
+    </div>
+    {% endfor %}
+  </div>
+  <h2>{{ t(lang, "Категории игр","Game categories") }}</h2>
+  <div class="app-list">
+    {% for code, label in game_categories %}
+    <div class="app" onclick="window.location.href='/category?code={{ code }}'">
+      <div class="app-info"><span class="app-title">{{ label }}</span><div class="app-meta">{{ code }}</div></div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

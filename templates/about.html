@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %} - {{ t(lang, "О проекте","About") }}{% endblock %}
+{% block content %}
+<div class="header-bar">
+  <a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a>
+  <img src="/html/search.png" alt="Search" class="search-icon" onclick="window.location.href='/search'">
+</div>
+<div class="nav-panel">
+  <a href="/"><img src="/html/downloadclient.png" alt="Download"></a>
+  {% if auth %}
+  <div class="flex" style="gap:5px">
+    <a href="/profile"><img src="/html/{{ auth.get('avatar','default_avatar.png') }}" class="avatar" alt=""></a>
+    <a href="/logout" style="color:#fff;font-size:12px">{{ "Выйти" if lang=='ru' else 'Logout' }}</a>
+  </div>
+  {% else %}
+  <div class="flex" style="gap:5px">
+    <a href="/register"><img src="/html/register.png" alt="Register" style="height:28px"></a>
+    <a href="/login"><img src="/html/login.png" alt="Login" style="height:28px"></a>
+  </div>
+  {% endif %}
+</div>
+<div class="featured">
+  <div class="card" style="margin:10px">
+    <h2 style="text-align:center">{{ config.name }}</h2>
+    <p style="margin:10px 0;line-height:1.5">{{ config.description }}</p>
+    <p style="margin:10px 0;line-height:1.5">{{ t(lang, "Проект помогает без проблем скачивать приложения и игры на старые Android устройства.","The project helps to download apps and games on old Android devices without any hassle.") }}</p>
+    <h3 style="margin:15px 0 5px">{{ t(lang, "Предложка приложений:","Suggest an app:") }}</h3>
+    <p>Email: <a href="mailto:oldmarket2025@gmail.com">oldmarket2025@gmail.com</a></p>
+    <h3 style="margin:15px 0 5px">{{ t(lang, "Источники:","Sources:") }}</h3>
+    <p>Telegram: <a href="https://t.me/apksherr" target="_blank">t.me/apksherr</a></p>
+    <p>TikTok: <a href="https://www.tiktok.com/@oldandroider" target="_blank">www.tiktok.com/@oldandroider</a></p>
+    <p>YouTube: <a href="https://youtube.com/@oldandroider" target="_blank">youtube.com/@oldandroider</a></p>
+    <p>OpenVK: <a href="https://ovk.to/id21946" target="_blank">ovk.to/id21946</a></p>
+    <p>UIN: 2461964</p>
+    {% if links.donate_urls %}
+    <h3 style="margin:15px 0 5px">{{ t(lang, "Поддержать проект:","Support us:") }}</h3>
+    {% for url in links.donate_urls %}
+    <p><a href="{{ url }}" target="_blank" style="color:#e94560">{{ url }}</a></p>
+    {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

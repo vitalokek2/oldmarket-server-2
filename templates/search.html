@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %} - {{ t(lang, "Поиск","Search") }}{% endblock %}
+{% block content %}
+<div class="header-bar">
+  <a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a>
+  <img src="/html/search.png" alt="Search" class="search-icon" onclick="window.location.href='/search'">
+</div>
+<div class="featured">
+  <div class="card" style="margin:8px">
+    <form action="/search" method="GET" style="display:flex;gap:4px">
+      <input type="text" name="q" value="{{ query }}" placeholder="{{ t(lang, 'Поиск...','Search...') }}" style="flex:1;padding:10px;font-size:16px">
+      <button type="submit" class="btn">{{ t(lang, "Найти","Search") }}</button>
+    </form>
+  </div>
+  {% if query %}
+  <h2>{{ t(lang, "Результаты поиска","Search results") }}: "{{ query }}"</h2>
+  <div class="app-list">
+    {% for app in results %}
+    <div class="app" onclick="window.location.href='/app?id={{ app.id }}'">
+      <img src="{{ cdn("/html/apps/" ~ app.icon) }}" alt="">
+      <div class="app-info">
+        <span class="app-title">{{ app.name }}</span>
+        <div class="app-meta">Android {{ api_level_to_android(app.api) }}<br>{{ t(lang, "Скачиваний","Downloads") }}: {{ app.downloads }}</div>
+      </div>
+    </div>
+    {% else %}
+    <p style="text-align:center;padding:20px;color:#aaa">{{ t(lang, "Ничего не найдено","Nothing found") }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% block title %} - {{ app.name }}{% endblock %}
+{% block content %}
+{% set app_author = app.get("author","") %}
+{% set category_code = app.get("category_code","") or app.get("category","") %}
+
+<div class="header-bar">
+  <div class="flex" style="gap:8px">
+    <img src="/html/appdownload/back.png" alt="Back" style="width:20px;height:25px;cursor:pointer" onclick="window.location.href='/'">
+    <img src="/html/appdownload/store.png" alt="Store" style="width:32px;height:32px">
+  </div>
+  <div>
+    {% if auth %}
+    <span class="text-sm">{{ auth.username }}</span>
+    {% else %}
+    <a href="/login" class="text-sm">{{ t(lang, "Войдите","Log in") }}</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card flex-between">
+  <div class="flex" style="flex:1">
+    <img src="{{ cdn("/html/apps/" ~ app.icon) }}" alt="" style="width:50px;height:50px;border-radius:8px;flex-shrink:0">
+    <div style="flex:1">
+      <div style="font-size:18px;font-weight:bold">{{ app.name }}</div>
+      {% if app_author %}<div class="text-sm">{{ app_author }}</div>{% endif %}
+    </div>
+  </div>
+  <a href="/api/download/{{ app.id }}{% if auth %}?user_id={{ auth.user_id }}{% endif %}" class="btn-install" id="downloadLink">{{ links.get("install_button") if lang=='ru' else links.get("install_button_en","Install") }}</a>
+</div>
+
+{% if app.get("screenshots") %}
+<div class="screenshots">
+  {% for s in app.screenshots %}
+  <img src="{{ cdn("/html/screenshots/" ~ s) }}" onclick="openModal('{{ cdn("/html/screenshots/" ~ s) }}')">
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="card-white">
+  <p><strong>{{ t(lang, "Описание:","Description:") }}</strong></p>
+  <p>{{ app.description }}</p>
+  <p><strong>{{ t(lang, "Версия:","Version:") }}</strong> {{ app.version }}</p>
+  <p><strong>Android:</strong> {{ api_level_to_android(app.api) }}</p>
+  <p><strong>{{ t(lang, "Категория:","Category:") }}</strong> {{ cat_label }}</p>
+  <p><strong>{{ t(lang, "Имя пакета:","Package:") }}</strong> {{ app.get("package","") }}</p>
+</div>
+
+{% if app.get("versions") %}
+<div class="card">
+  <label>{{ t(lang, "Выберите версию:","Select version:") }}</label>
+  <select class="version-select" id="versionSelect" onchange="updateDownloadLink()" style="width:100%;padding:8px;margin-top:4px">
+    {% for v in app.versions %}
+    <option value="{{ v.version }}" data-apk="{{ v.apk_file }}" data-api="{{ v.api }}"{% if v.version==app.version %} selected{% endif %}>
+      {{ t(lang, "Версия","Version") }} {{ v.version }} (Android {{ api_level_to_android(v.api) }})
+    </option>
+    {% endfor %}
+  </select>
+</div>
+{% endif %}
+
+<div id="reviews-section" class="card">
+  <h3 style="margin-bottom:8px">{{ t(lang, "Отзывы","Reviews") }}</h3>
+  <div id="reviews-list">{{ t(lang, "Загрузка...","Loading...") }}</div>
+  <div id="review-form-area"></div>
+  {% if not auth %}
+  <p class="text-sm mt"><a href="/login">{{ t(lang, "Войдите, чтобы оставить отзыв","Log in to leave a review") }}</a></p>
+  {% endif %}
+</div>
+
+<div class="modal" id="screenshotModal" onclick="this.style.display='none'">
+  <img id="modalImage" src="">
+</div>
+
+
+<script>
+var APP_ID={{ app.id }};
+var CURRENT_USER_ID={{ auth.get("user_id",0) }};
+
+function byId(id){return document.getElementById(id)}
+
+function updateDownloadLink(){
+  var sel=byId("versionSelect");
+  if(!sel)return;
+  var opt=sel.options[sel.selectedIndex];
+  var href="/api/download/"+APP_ID+"/"+encodeURIComponent(opt.value)+(CURRENT_USER_ID?"?user_id="+CURRENT_USER_ID:"");
+  byId("downloadLink").href=href;
+}
+
+function openModal(src){
+  byId("screenshotModal").style.display="flex";
+  byId("modalImage").src=src;
+}
+
+function ajax(method,url,body,cb){
+  var x=new XMLHttpRequest();
+  x.open(method,url,true);
+  if(method!="GET")x.setRequestHeader("Content-Type","application/json");
+  x.onreadystatechange=function(){
+    if(x.readyState==4){
+      var j=null;
+      try{j=JSON.parse(x.responseText)}catch(e){}
+      cb(x.status,j);
+    }
+  };
+  x.send(body?JSON.stringify(body):null);
+}
+
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+
+function loadReviews(){
+  var list=byId("reviews-list");
+  if(!list)return;
+  list.innerHTML="{{ t(lang,'Загрузка...','Loading...')|e }}";
+  var url="/api/app/"+APP_ID+"/reviews"+(CURRENT_USER_ID?"?viewer_id="+CURRENT_USER_ID:"");
+  ajax("GET",url,null,function(status,json){
+    if(!json||!json.length){list.innerHTML="<p>{{ t(lang,'Пока нет отзывов.','No reviews yet.')|e }}</p>";return}
+    var h="";
+    for(var i=0;i<json.length;i++){
+      var r=json[i];
+      var stars="";
+      for(var k=0;k<Math.min(5,Math.max(0,r.rating||0));k++)stars+="★";
+      h+='<div class="review-item">'
+        +'<div class="flex-between">'
+        +'<div class="flex"><img src="{{ cdn("/html/avatars/") }}'+esc(r.avatar||"default_avatar.png")+'" class="avatar"><strong>'+esc(r.username)+'</strong></div>'
+        +'<span class="text-gold">'+stars+'</span></div>'
+        +'<p class="mt mb">'+esc(r.comment)+'</p>'
+        +'<div class="text-sm">'+esc(r.created_at||"")+'</div>'
+        +'<div class="flex mt" style="gap:8px;flex-wrap:wrap">'
+        +'<button class="react-btn like-btn'+(r.user_reaction==1?' active':'')+'" onclick="setReaction('+r.id+',1)"><span>👍</span> <span class="like-count">'+(r.likes||0)+'</span></button>'
+        +'<button class="react-btn dislike-btn'+(r.user_reaction==-1?' active':'')+'" onclick="setReaction('+r.id+',-1)"><span>👎</span> <span class="dislike-count">'+(r.dislikes||0)+'</span></button>'
+        +(CURRENT_USER_ID?'<span class="report-btn" onclick="reportReview('+r.id+')">🚩 {{ t(lang,"Жалоба","Report")|e }}</span>':'')
+        +'<span class="comments-toggle" onclick="toggleComments('+r.id+')" style="cursor:pointer;color:#1d6fdc;font-size:12px">{{ t(lang,"Комментарии","Comments")|e }} (<span class="comments-count">'+(r.comments_count||0)+'</span>)</span>'
+        +'</div>'
+        +'<div class="comments-box" id="commentsBox-'+r.id+'"><div id="commentsList-'+r.id+'"></div>'
+        +(CURRENT_USER_ID?'<div class="flex mt" style="gap:4px"><input type="text" id="commentInput-'+r.id+'" maxlength="300" placeholder="'+esc("{{ t(lang,'Написать комментарий...','Write a comment...')|e }}")+'" style="flex:1;padding:6px"><button class="btn" onclick="addComment('+r.id+')" style="padding:6px 10px">OK</button></div>'
+        :'<div class="text-sm mt"><a href="/login">{{ t(lang,"Войдите, чтобы комментировать","Log in to comment")|e }}</a></div>')
+        +'</div></div>';
+    }
+    list.innerHTML=h;
+    loadReviewForm();
+  });
+}
+
+function loadReviewForm(){
+  if(!CURRENT_USER_ID)return;
+  var area=byId("review-form-area");
+  if(!area)return;
+  ajax("GET","/api/app/"+APP_ID+"/reviews?viewer_id="+CURRENT_USER_ID,null,function(status,json){
+    if(json)for(var i=0;i<json.length;i++){if(json[i].user_id==CURRENT_USER_ID)return}
+    area.innerHTML='<div class="card-white mt"><h3>{{ t(lang,"Оставить отзыв","Leave a review")|e }}</h3>'
+      +'<form onsubmit="submitReview(event)">'
+      +'<div class="star-rating mb">'
+      +'<input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>'
+      +'<input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>'
+      +'<input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>'
+      +'<input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>'
+      +'<input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>'
+      +'</div>'
+      +'<textarea name="comment" maxlength="300" placeholder="{{ t(lang,"Ваш отзыв (максимум 300 символов)...","Your review (max 300 chars)...")|e }}" style="width:100%;padding:8px;margin:8px 0;box-sizing:border-box"></textarea>'
+      +'<button type="submit" class="btn">{{ t(lang,"Отправить","Submit")|e }}</button>'
+      +'</form></div>';
+  });
+}
+
+function submitReview(e){
+  e.preventDefault();
+  var form=e.target;
+  var fd=new FormData(form);
+  var rating=0;
+  for(var pair of fd.entries()){if(pair[0]=="rating")rating=parseInt(pair[1])}
+  var comment=form.querySelector("textarea[name=comment]").value||"";
+  if(rating<1){alert("{{ t(lang,'Выберите рейтинг','Select rating')|e }}");return}
+  ajax("POST","/api/app/"+APP_ID+"/review",{user_id:CURRENT_USER_ID,rating:rating,comment:comment},function(status,json){
+    if(status>=200&&status<300){location.reload()}
+    else{alert(json&&json.error?json.error:"{{ t(lang,'Ошибка','Error')|e }}")}
+  });
+}
+
+function setReaction(reviewId,value){
+  if(!CURRENT_USER_ID){alert("{{ t(lang,'Войдите, чтобы ставить реакции','Log in to react')|e }}");return}
+  var btns=document.querySelectorAll('.like-btn,.dislike-btn');
+  ajax("POST","/api/review/"+reviewId+"/reaction",{user_id:CURRENT_USER_ID,value:value},function(status,json){
+    if(status<200||status>=300){alert(json&&json.error?json.error:"Error");return}
+    loadReviews();
+  });
+}
+
+function reportReview(reviewId){
+  if(!CURRENT_USER_ID){alert("{{ t(lang,'Войдите','Log in')|e }}");return}
+  if(!confirm("{{ t(lang,'Отправить жалобу?','Send report?')|e }}"))return;
+  ajax("POST","/api/review/"+reviewId+"/report",{user_id:CURRENT_USER_ID,reason:""},function(status){
+    if(status<200||status>=300)alert("Error");
+    else alert("{{ t(lang,'Жалоба отправлена','Report sent')|e }}");
+  });
+}
+
+function toggleComments(reviewId){
+  var box=byId("commentsBox-"+reviewId);
+  if(!box)return;
+  box.style.display=box.style.display==="block"?"none":"block";
+  if(box.style.display==="block")loadComments(reviewId);
+}
+
+function loadComments(reviewId){
+  var list=byId("commentsList-"+reviewId);
+  if(!list)return;
+  list.innerHTML="{{ t(lang,'Загрузка...','Loading...')|e }}";
+  ajax("GET","/api/review/"+reviewId+"/comments",null,function(status,json){
+    if(!json||!json.length){list.innerHTML="<div class='text-sm'>{{ t(lang,'Нет комментариев','No comments')|e }}</div>";return}
+    var h="";
+    for(var i=0;i<json.length;i++){
+      var c=json[i];
+      h+='<div class="comment-item flex" style="gap:6px">'
+        +'<img src="{{ cdn("/html/avatars/") }}'+esc(c.avatar||"default_avatar.png")+'" class="avatar" style="width:24px;height:24px">'
+        +'<div style="flex:1"><strong>'+esc(c.username)+'</strong> <span class="text-sm">'+esc(c.created_at)+'</span><br>'+esc(c.text)+'</div></div>';
+    }
+    list.innerHTML=h;
+  });
+}
+
+function addComment(reviewId){
+  if(!CURRENT_USER_ID){alert("{{ t(lang,'Войдите','Log in')|e }}");return}
+  var input=byId("commentInput-"+reviewId);
+  if(!input||!input.value.trim())return;
+  ajax("POST","/api/review/"+reviewId+"/comment",{user_id:CURRENT_USER_ID,text:input.value.trim()},function(status){
+    if(status<200||status>=300)alert("Error");
+    else{input.value="";loadComments(reviewId)}
+  });
+}
+
+loadReviews();
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %} - {{ "Магазин приложений" if lang == "ru" else "App Store" }}{% endblock %}
+{% block content %}
+<div class="header-bar">
+  <a href="/"><img src="{{ config.logo }}" alt="{{ config.name }}" class="logo"></a>
+  <img src="/html/search.png" alt="Search" class="search-icon" onclick="window.location.href='/search'">
+</div>
+<div class="nav-panel">
+  <a href="{{ links.download_client }}"><img src="/html/downloadclient.png" alt="Download"></a>
+  {% if auth %}
+  <div class="flex" style="gap:5px">
+    <a href="/profile"><img src="/html/{{ auth.get('avatar','default_avatar.png') }}" class="avatar" alt=""></a>
+    <a href="/logout" style="color:#fff;font-size:12px">{{ "Выйти" if lang=='ru' else 'Logout' }}</a>
+  </div>
+  {% else %}
+  <div class="flex" style="gap:5px">
+    <a href="/register"><img src="/html/register.png" alt="Register" style="height:28px"></a>
+    <a href="/login"><img src="/html/login.png" alt="Login" style="height:28px"></a>
+  </div>
+  {% endif %}
+</div>
+<div class="featured">
+  <h2>{{ t(lang, "Популярные игры","Popular games") if mode=="games" else t(lang, "Популярные приложения","Popular apps") }}</h2>
+  <div class="app-list">
+    {% for app in top[:6] %}
+    <div class="app" onclick="window.location.href='/app?id={{ app.id }}'">
+      <img src="{{ cdn("/html/apps/" ~ app.icon) }}" alt="">
+      <div class="app-info">
+        <span class="app-title">{{ app.name }}</span>
+        <div class="app-meta">{{ t(lang, "Рейтинг","Rating") }}: {{ app.get('rating',0) }} ★<br>{{ t(lang, "Скачиваний","Downloads") }}: {{ app.downloads }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <h2>{{ t(lang, "Все игры","All games") if mode=="games" else t(lang, "Все приложения","All apps") }}</h2>
+  <div class="app-list" style="text-align:center;padding:5px 0">
+    {% if page == 1 %}
+    <div class="app" style="justify-content:center" onclick="window.location.href='/?mode={{ 'apps' if mode=='games' else 'games' }}'">
+      <img src="/html/{{ 'apps.jpg' if mode=='games' else 'games.png' }}" alt="" style="width:auto;height:44px">
+    </div>
+    {% if mode == "apps" %}
+    <div class="app" style="justify-content:center" onclick="window.location.href='/categories'">
+      <img src="/html/category.jpg" alt="" style="width:auto;height:44px">
+    </div>
+    {% endif %}
+    {% endif %}
+    {% for app in paged %}
+    <div class="app" onclick="window.location.href='/app?id={{ app.id }}'">
+      <img src="{{ cdn("/html/apps/" ~ app.icon) }}" alt="">
+      <div class="app-info">
+        <span class="app-title">{{ app.name }}</span>
+        <div class="app-meta">{{ t(lang, "Рейтинг","Rating") }}: {{ app.get('rating',0) }} ★<br>{{ t(lang, "Скачиваний","Downloads") }}: {{ app.downloads }}<br>Android {{ api_level_to_android(app.api) }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% if total_pages > 1 %}
+  <div class="pagination">
+    {% if page > 1 %}<a href="/?mode={{ mode }}&page=1">{{ t(lang, "В начало","First") }}</a>{% endif %}
+    {% set start = [page-2,1]|max %}
+    {% set end = [page+2,total_pages]|min %}
+    {% for i in range(start, end+1) %}
+    <a href="/?mode={{ mode }}&page={{ i }}" class="{{ 'active' if i==page else '' }}">{{ i }}</a>
+    {% endfor %}
+    {% if page < total_pages %}<a href="/?mode={{ mode }}&page={{ total_pages }}">{{ t(lang, "В конец","Last") }}</a>{% endif %}
+    <div class="info">{{ t(lang, "Страница","Page") }} {{ page }} {{ t(lang, "из","of") }} {{ total_pages }}</div>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+var BANNERS=[];
+(function(){
+  var x=new XMLHttpRequest();
+  x.open('GET','/api/banners',true);
+  x.onreadystatechange=function(){
+    if(x.readyState==4&&x.status==200){
+      try{BANNERS=JSON.parse(x.responseText)}catch(e){}
+      if(BANNERS&&BANNERS.length){
+        var img=document.getElementById('bannerImg');
+        var link=document.getElementById('bannerLink');
+        if(!img)return;
+        var idx=0,ms=5000;
+        function apply(i){
+          var b=BANNERS[i]||{};
+          img.src='{{ cdn("/html/banners/") }}'+(b.image||'');
+          if(link){link.href=b.url||'#';link.style.pointerEvents=b.url?'auto':'none'}
+        }
+        apply(0);
+        if(BANNERS.length>1)setInterval(function(){idx=(idx+1)%BANNERS.length;apply(idx)},ms);
+      }
+    }
+  };
+  x.send();
+})();
+</script>
+{% endblock %}
